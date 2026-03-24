@@ -13,9 +13,12 @@ Projeto desenvolvido para a disciplina de UX/UI, com foco em transformar protót
 
 ## 🚀 Tecnologias
 
-<p>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" width="40"/>
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg" width="40"/>
+<p align="left">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" width="30"/>
+  Flutter &nbsp;&nbsp;
+
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg" width="30"/>
+  Dart
 </p>
 
 ## 👩‍💻 Desenvolvido por
