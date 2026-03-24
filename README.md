@@ -12,8 +12,11 @@ Aplicativo desenvolvido em Flutter para gerenciamento de tarefas.
 Projeto desenvolvido para a disciplina de UX/UI, com foco em transformar protótipos do Figma em um aplicativo funcional utilizando Flutter.
 
 ## 🚀 Tecnologias
-- Flutter
-- Dart
+
+<p>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" width="40"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg" width="40"/>
+</p>
 
 ## 👩‍💻 Desenvolvido por
 Larissa 💙
