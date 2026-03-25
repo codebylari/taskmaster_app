@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meu_app/screens/home_page.dart';
+import 'home_page.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -7,14 +7,16 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+
   @override
   void initState() {
     super.initState();
 
-    Future.delayed(Duration(seconds: 2), () {
+    // 🔥 tempo maior
+    Future.delayed(Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => HomePage()),
+        MaterialPageRoute(builder: (context) => HomePage()),
       );
     });
   }
@@ -23,22 +25,25 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        width: double.infinity,
+        width: double.infinity, // 🔥 garante tela cheia
         height: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFF5F52FF), Color(0xFF6C63FF)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Spacer(),
 
             Text(
               "TaskMaster",
               style: TextStyle(
-                fontSize: 40,
+                fontSize: 50,
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),

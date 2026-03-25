@@ -10,6 +10,9 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
   bool lembrete = true;
   String horario = "00:00";
 
+  // 🔥 controller da data
+  TextEditingController dataController = TextEditingController();
+
   List<String> horarios =
       List.generate(24, (h) => "${h.toString().padLeft(2, '0')}:00");
 
@@ -35,7 +38,34 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
             TextField(decoration: inputStyle("Nome")),
             SizedBox(height: 10),
 
-            TextField(decoration: inputStyle("Data")),
+            // 🔥 DATA CORRIGIDA
+            TextField(
+              controller: dataController,
+              readOnly: true, // não permite digitar
+              decoration: inputStyle("Data").copyWith(
+                suffixIcon: Icon(Icons.calendar_today),
+              ),
+              onTap: () async {
+                DateTime? pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now(),
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2100),
+                );
+
+                if (pickedDate != null) {
+                  String formatted =
+                      "${pickedDate.day.toString().padLeft(2, '0')}/"
+                      "${pickedDate.month.toString().padLeft(2, '0')}/"
+                      "${pickedDate.year}";
+
+                  setState(() {
+                    dataController.text = formatted;
+                  });
+                }
+              },
+            ),
+
             SizedBox(height: 10),
 
             TextField(
