@@ -1,17 +1,25 @@
-# meu_app
+# TaskMaster 📱
 
-A new Flutter project.
+Aplicativo desenvolvido em Flutter para gerenciamento de tarefas.
 
-## Getting Started
+## ✨ Funcionalidades
+- Tela de Splash
+- Tela inicial com lista de tarefas
+- Marcação de tarefas
+- Botão para adicionar tarefas
 
-This project is a starting point for a Flutter application.
+## 🎯 Objetivo
+Projeto desenvolvido para a disciplina de UX/UI, com foco em transformar protótipos do Figma em um aplicativo funcional utilizando Flutter.
 
-A few resources to get you started if this is your first Flutter project:
+## 🚀 Tecnologias
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+<p align="left">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flutter/flutter-original.svg" width="30"/>
+  Flutter &nbsp;&nbsp;
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/dart/dart-original.svg" width="30"/>
+  Dart
+</p>
+
+## 👩‍💻 Desenvolvido por
+Larissa 💙
