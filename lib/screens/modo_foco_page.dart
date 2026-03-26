@@ -34,7 +34,6 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
         timer.cancel();
         rodando = false;
 
-        // 🔔 vibração/som
         HapticFeedback.mediumImpact();
       }
     });
@@ -69,6 +68,41 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
     return "$m:$sec";
   }
 
+  void concluirTarefa() async {
+  await showDialog(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.check_circle, color: Colors.green, size: 60),
+          const SizedBox(height: 10),
+          const Text(
+            "Tarefa concluída! 🎉",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 15),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(dialogContext); // fecha popup
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF7F00FF),
+            ),
+            child: const Text("OK"),
+          )
+        ],
+      ),
+    ),
+  );
+
+  Navigator.pop(context);        // sai do modo foco
+  Navigator.pop(context, true);  // sai dos detalhes e vai pra home com resultado
+}
+
   @override
   void dispose() {
     timer?.cancel();
@@ -100,7 +134,7 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 🔙 voltar
+              // 🔙 VOLTAR
               Align(
                 alignment: Alignment.topLeft,
                 child: GestureDetector(
@@ -127,7 +161,7 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
 
               const SizedBox(height: 20),
 
-              // ⭕ CRONÔMETRO CIRCULAR
+              // ⭕ CRONÔMETRO
               Stack(
                 alignment: Alignment.center,
                 children: [
@@ -143,7 +177,6 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
                       ),
                     ),
                   ),
-
                   Text(
                     formatar(tempoRestante),
                     style: const TextStyle(
@@ -156,31 +189,28 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
 
               const SizedBox(height: 20),
 
-              // CONTROLES
+              // ▶️ CONTROLES
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
                     onPressed: iniciar,
                     icon: const Icon(Icons.play_arrow, color: Colors.purple),
-                    iconSize: 32,
                   ),
                   IconButton(
                     onPressed: pausar,
                     icon: const Icon(Icons.pause, color: Colors.orange),
-                    iconSize: 32,
                   ),
                   IconButton(
                     onPressed: resetar,
                     icon: const Icon(Icons.restart_alt, color: Colors.red),
-                    iconSize: 32,
                   ),
                 ],
               ),
 
               const SizedBox(height: 15),
 
-              // INPUT TEMPO
+              // ⌨️ INPUT TEMPO
               Row(
                 children: [
                   Expanded(
@@ -214,18 +244,18 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
 
               const SizedBox(height: 15),
 
-              // INFO
+              // 📋 INFO
               Text("Nome: ${tarefa['nome'] ?? ''}"),
               Text("Data: ${tarefa['data'] ?? ''}"),
               Text("Obs: ${tarefa['observacao'] ?? ''}"),
 
               const SizedBox(height: 20),
 
-              // BOTÕES
+              // 🔘 BOTÕES
               Row(
                 children: [
                   Expanded(
-                    child: botao("Concluir", Colors.green, () {}),
+                    child: botao("Concluir", Colors.green, concluirTarefa),
                   ),
                   const SizedBox(width: 10),
                   Expanded(

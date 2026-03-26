@@ -1,16 +1,34 @@
 import 'package:flutter/material.dart';
 import 'detalhes_tarefa_page.dart';
-import 'nova_tarefa_page.dart'; // ✅ ADICIONADO
+import 'nova_tarefa_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List<Map<String, dynamic>> tarefas = [
+    {"nome": "Estudar UX", "cor": Colors.red, "concluida": false},
+    {
+      "nome": "Academia",
+      "cor": Color.fromARGB(255, 255, 218, 108),
+      "concluida": false
+    },
+    {
+      "nome": "Fazer Trabalho",
+      "cor": Color.fromARGB(255, 112, 255, 117),
+      "concluida": false
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
 
-      // 🔥 APPBAR MODERNA
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -25,93 +43,74 @@ class HomePage extends StatelessWidget {
         ),
       ),
 
-      // 📋 LISTA
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        children: [
-          _cardTarefa(context, "Estudar UX", Colors.red),
-          _cardTarefa(context, "Academia", Colors.amber),
-          _cardTarefa(context, "Fazer Trabalho", Colors.green),
-        ],
+      body: ListView.builder(
+        padding: const EdgeInsets.all(20),
+        itemCount: tarefas.length,
+        itemBuilder: (context, index) {
+          final tarefa = tarefas[index];
+          return _cardTarefa(context, tarefa, index);
+        },
       ),
 
-      // ➕ BOTÃO FLUTUANTE FUNCIONANDO
-      floatingActionButton: Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          gradient: const LinearGradient(
-            colors: [Color(0xFF7F00FF), Color(0xFFE100FF)],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              blurRadius: 10,
-            ),
-          ],
-        ),
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => NovaTarefaPage(),
-              ),
-            );
-          },
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          child: const Icon(Icons.add, size: 28),
-        ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => NovaTarefaPage()),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }
 
-  // 🧾 CARD MODERNO
-  Widget _cardTarefa(BuildContext context, String nome, Color cor) {
+  Widget _cardTarefa(
+    BuildContext context,
+    Map<String, dynamic> tarefa,
+    int index,
+  ) {
+    final concluida = tarefa["concluida"];
+
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        final resultado = await Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => DetalhesTarefaPage(
-              tarefa: {"nome": nome},
-            ),
+            builder: (_) => DetalhesTarefaPage(tarefa: tarefa),
           ),
         );
+
+        if (resultado == true) {
+          setState(() {
+            tarefas[index]["concluida"] = true;
+          });
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 15),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Row(
           children: [
-            const Icon(Icons.check_box_outline_blank, color: Colors.grey),
+            Icon(
+              concluida
+                  ? Icons.check_box
+                  : Icons.check_box_outline_blank,
+              color: concluida ? Colors.green : Colors.grey,
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                nome,
-                style: const TextStyle(
+                tarefa["nome"],
+                style: TextStyle(
                   fontSize: 16,
-                  fontWeight: FontWeight.w500,
+                  decoration: concluida
+                      ? TextDecoration.lineThrough
+                      : TextDecoration.none,
                 ),
-              ),
-            ),
-            Container(
-              width: 10,
-              height: 10,
-              decoration: BoxDecoration(
-                color: cor,
-                shape: BoxShape.circle,
               ),
             ),
           ],
