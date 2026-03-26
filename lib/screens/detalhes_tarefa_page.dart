@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'modo_foco_page.dart';
 import 'editar_tarefa_page.dart';
-import 'excluir_tarefa_dialog.dart';
 
 class DetalhesTarefaPage extends StatelessWidget {
   final Map<String, dynamic> tarefa;
@@ -67,7 +66,7 @@ class DetalhesTarefaPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      // ✏️ EDITAR (CORRIGIDO)
+                      // ✏️ EDITAR
                       _Botao("Editar", Colors.blue, () async {
                         final resultado = await Navigator.push(
                           context,
@@ -78,15 +77,31 @@ class DetalhesTarefaPage extends StatelessWidget {
                         );
 
                         if (resultado != null) {
-                          Navigator.pop(context, resultado); // 👈 ESSA LINHA RESOLVE TUDO
+                          Navigator.pop(context, resultado);
                         }
                       }),
 
-                      // 🗑️ EXCLUIR (já correto)
+                      // 🗑️ EXCLUIR (CORRIGIDO)
                       _Botao("Excluir", Colors.red, () async {
                         final confirmar = await showDialog(
                           context: context,
-                          builder: (_) => const ExcluirTarefaDialog(),
+                          builder: (_) => AlertDialog(
+                            title: const Text("Excluir tarefa"),
+                            content: const Text(
+                                "Tem certeza que deseja excluir?"),
+                            actions: [
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.pop(context, false),
+                                child: const Text("Cancelar"),
+                              ),
+                              TextButton(
+                                onPressed: () =>
+                                    Navigator.pop(context, true),
+                                child: const Text("Excluir"),
+                              ),
+                            ],
+                          ),
                         );
 
                         if (confirmar == true) {

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 class NovaTarefaPage extends StatefulWidget {
+  const NovaTarefaPage({super.key});
+
   @override
-  _NovaTarefaPageState createState() => _NovaTarefaPageState();
+  State<NovaTarefaPage> createState() => _NovaTarefaPageState();
 }
 
 class _NovaTarefaPageState extends State<NovaTarefaPage> {
@@ -12,14 +14,16 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
 
   TextEditingController nomeController = TextEditingController();
   TextEditingController dataController = TextEditingController();
+  TextEditingController observacaoController = TextEditingController(); // 🔥 NOVO
 
   List<String> horarios =
       List.generate(24, (h) => "${h.toString().padLeft(2, '0')}:00");
 
+  // 🔥 FUNÇÃO CORRIGIDA COMPLETA
   void salvarTarefa() {
     if (nomeController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text("O nome é obrigatório!"),
           backgroundColor: Colors.red,
         ),
@@ -27,21 +31,41 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
       return;
     }
 
-    print("Tarefa salva!");
-    Navigator.pop(context);
+    String prioridadeFormatada;
+    if (prioridade == "Alta") {
+      prioridadeFormatada = "alta";
+    } else if (prioridade == "Média") {
+      prioridadeFormatada = "media";
+    } else {
+      prioridadeFormatada = "baixa";
+    }
+
+    final novaTarefa = {
+      "nome": nomeController.text,
+      "prioridade": prioridadeFormatada,
+      "concluida": false,
+      "data": dataController.text, // 🔥 AGORA SALVA DATA
+      "observacao": observacaoController.text, // 🔥 AGORA SALVA OBS
+      "dataCriacao": DateTime.now(),
+    };
+
+    Navigator.pop(context, novaTarefa);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFEDEDED),
+      backgroundColor: const Color(0xFFEDEDED),
 
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: BackButton(color: Colors.purple),
+        leading: const BackButton(color: Colors.purple),
         centerTitle: true,
-        title: Text("Nova Tarefa", style: TextStyle(color: Colors.black)),
+        title: const Text(
+          "Nova Tarefa",
+          style: TextStyle(color: Colors.black),
+        ),
       ),
 
       body: Padding(
@@ -50,21 +74,20 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
 
-            // 🔥 NOME (SEM BORDA)
             TextField(
               controller: nomeController,
               decoration: inputStyle("Nome"),
             ),
-            SizedBox(height: 10),
 
-            // 🔥 DATA MENOR E CLEAN
+            const SizedBox(height: 10),
+
             SizedBox(
               height: 55,
               child: TextField(
                 controller: dataController,
                 readOnly: true,
                 decoration: inputStyle("Data").copyWith(
-                  suffixIcon: Icon(Icons.calendar_today),
+                  suffixIcon: const Icon(Icons.calendar_today),
                 ),
                 onTap: () async {
                   DateTime? pickedDate = await showDatePicker(
@@ -88,45 +111,49 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
               ),
             ),
 
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
-            // 🔥 OBSERVAÇÃO SEM BORDA
+            // 🔥 AGORA SALVA OBSERVAÇÃO
             TextField(
+              controller: observacaoController,
               maxLines: 3,
               decoration: inputStyle("Observação"),
             ),
 
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
 
-            Text("Prioridade", style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: 10),
+            const Text(
+              "Prioridade",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 10),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 prioridadeBox("Alta", Colors.red),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 prioridadeBox("Média", Colors.amber),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 prioridadeBox("Baixa", Colors.green),
               ],
             ),
 
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
-            // 🔥 LEMBRETE MODERNO
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.notifications_outlined),
-                  SizedBox(width: 10),
-                  Text("Lembrete", style: TextStyle(fontSize: 16)),
-                  Spacer(),
+                  const Icon(Icons.notifications_outlined),
+                  const SizedBox(width: 10),
+                  const Text("Lembrete"),
+                  const Spacer(),
                   Switch(
                     value: lembrete,
                     onChanged: (value) {
@@ -134,36 +161,33 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
                         lembrete = value;
                       });
                     },
-                    activeColor: Colors.white,
                     activeTrackColor: Colors.green,
-                    inactiveThumbColor: Colors.white,
-                    inactiveTrackColor: Colors.grey.shade400,
                   ),
                 ],
               ),
             ),
 
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
 
-            // 🔥 HORÁRIO
             Opacity(
               opacity: lembrete ? 1 : 0.4,
               child: IgnorePointer(
                 ignoring: !lembrete,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.access_time),
-                      SizedBox(width: 10),
-                      Text("Horário: "),
+                      const Icon(Icons.access_time),
+                      const SizedBox(width: 10),
+                      const Text("Horário: "),
                       DropdownButton<String>(
                         value: horario,
-                        underline: SizedBox(),
+                        underline: const SizedBox(),
                         items: horarios.map((h) {
                           return DropdownMenuItem(
                             value: h,
@@ -182,51 +206,39 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
               ),
             ),
 
-            Expanded(child: Container()),
+            const Spacer(),
 
-            // 🔥 BOTÃO CENTRAL
             Center(
               child: SizedBox(
                 width: 200,
                 height: 50,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurpleAccent,
+                    backgroundColor: Colors.deepPurple,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
                   ),
                   onPressed: salvarTarefa,
-                  child: Text(
+                  child: const Text(
                     "Salvar",
-                    style: TextStyle(fontSize: 16, color: Colors.white),
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
               ),
             ),
-
-            SizedBox(height: 10),
           ],
         ),
       ),
     );
   }
 
-  // 🔥 INPUT CLEAN (SEM BORDA)
   InputDecoration inputStyle(String label) {
     return InputDecoration(
       labelText: label,
       filled: true,
       fillColor: Colors.white,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none, // 👈 remove borda preta
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
-      ),
-      focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,
       ),
@@ -243,7 +255,7 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
         });
       },
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
           color: selecionado ? cor.withOpacity(0.15) : Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -255,7 +267,7 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
         child: Row(
           children: [
             Container(width: 10, height: 10, color: cor),
-            SizedBox(width: 6),
+            const SizedBox(width: 6),
             Text(texto),
           ],
         ),
