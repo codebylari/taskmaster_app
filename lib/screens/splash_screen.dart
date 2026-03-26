@@ -12,8 +12,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    // 🔥 tempo maior
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomePage()),
@@ -25,44 +24,62 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        width: double.infinity, // 🔥 garante tela cheia
+        width: double.infinity,
         height: double.infinity,
-        decoration: BoxDecoration(
+
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFF5F52FF), Color(0xFF6C63FF)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Spacer(),
 
-            Text(
-              "TaskMaster",
-              style: TextStyle(
-                fontSize: 50,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+        child: Column(
+          children: [
+
+            // 🔥 CENTRO (título + subtítulo)
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+
+                    const Text(
+                      "TaskMaster",
+                      style: TextStyle(
+                        fontSize: 48,
+                        color: Colors.white,
+                        fontFamily: 'ShareTechMono',
+                        letterSpacing: 2,
+                      ),
+                    ),
+
+                    const SizedBox(height: 4), // 🔥 bem colado
+
+                    const Text(
+                      "Gerenciador de tarefas inteligentes",
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                        fontFamily: 'ShareTechMono',
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
 
-            SizedBox(height: 10),
-
-            Text(
-              "Gerenciador de tarefas inteligentes",
-              style: TextStyle(color: Colors.white70),
-            ),
-
-            Spacer(),
-
+            // 🔥 FRASE EMBAIXO (igual figma)
             Padding(
               padding: const EdgeInsets.only(bottom: 30),
-              child: Text(
+              child: const Text(
                 "“Organize sua vida”",
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontFamily: 'ShareTechMono',
+                ),
               ),
             ),
           ],

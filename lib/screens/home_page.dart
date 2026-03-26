@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meu_app/screens/nova_tarefa_page.dart';
+import 'package:meu_app/screens/detalhes_tarefa_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -95,9 +96,12 @@ class _HomePageState extends State<HomePage> {
             color: Colors.transparent,
             child: InkWell(
               onTap: () {
-                setState(() {
-                  item["concluido"] = !item["concluido"];
-                });
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => DetalhesTarefaPage(tarefa: item),
+                  ),
+                );
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10),

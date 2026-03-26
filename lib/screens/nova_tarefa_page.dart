@@ -10,7 +10,6 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
   bool lembrete = true;
   String horario = "00:00";
 
-  // 🔥 controller da data
   TextEditingController dataController = TextEditingController();
 
   List<String> horarios =
@@ -38,10 +37,9 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
             TextField(decoration: inputStyle("Nome")),
             SizedBox(height: 10),
 
-            // 🔥 DATA CORRIGIDA
             TextField(
               controller: dataController,
-              readOnly: true, // não permite digitar
+              readOnly: true,
               decoration: inputStyle("Data").copyWith(
                 suffixIcon: Icon(Icons.calendar_today),
               ),
@@ -106,8 +104,7 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
                     });
                   },
                   child: Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: lembrete ? Colors.green : Colors.red,
                       borderRadius: BorderRadius.circular(20),
@@ -147,6 +144,27 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
                 ),
               ],
             ),
+
+            // 🔥 EMPURRA O BOTÃO PRA BAIXO
+            Expanded(child: Container()),
+
+            // 🔥 BOTÃO SALVAR
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () {
+                  print("Tarefa salva!");
+                  Navigator.pop(context); // volta pra home
+                },
+                child: Text(
+                  "Salvar",
+                  style: TextStyle(fontSize: 16),
+                ),
+              ),
+            ),
+
+            SizedBox(height: 10),
           ],
         ),
       ),
