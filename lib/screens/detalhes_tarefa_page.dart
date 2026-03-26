@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'modo_foco_page.dart'; // 👈 IMPORTA A TELA
+import 'modo_foco_page.dart';
+import 'editar_tarefa_page.dart';
+import 'excluir_tarefa_dialog.dart';
 
 class DetalhesTarefaPage extends StatelessWidget {
   final Map<String, dynamic> tarefa;
@@ -16,7 +18,6 @@ class DetalhesTarefaPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             const SizedBox(height: 40),
 
             // 🔙 HEADER
@@ -44,7 +45,7 @@ class DetalhesTarefaPage extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withOpacity(0.9),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -53,23 +54,45 @@ class DetalhesTarefaPage extends StatelessWidget {
                   ),
                 ],
               ),
-
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
-                  _info("Nome", tarefa["nome"]),
-                  _info("Data", "20/04/2026"),
-                  _info("Observação", "Provas em Breve"),
-                  _info("Prioridade", "Alta"),
+                  _info("Nome", tarefa["nome"] ?? ""),
+                  _info("Data", tarefa["data"] ?? ""),
+                  _info("Observação", tarefa["observacao"] ?? ""),
+                  _info("Prioridade", tarefa["prioridade"] ?? ""),
 
                   const SizedBox(height: 20),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: const [
-                      _Botao("Editar", Colors.blue),
-                      _Botao("Excluir", Colors.red),
+                    children: [
+                      // ✏️ EDITAR
+                      _Botao("Editar", Colors.blue, () async {
+                        final resultado = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                EditarTarefaPage(tarefa: tarefa),
+                          ),
+                        );
+
+                        if (resultado != null) {
+                          tarefa["nome"] = resultado["nome"];
+                        }
+                      }),
+
+                      // 🗑️ EXCLUIR
+                      _Botao("Excluir", Colors.red, () async {
+                        final confirmar = await showDialog(
+                          context: context,
+                          builder: (_) => const ExcluirTarefaDialog(),
+                        );
+
+                        if (confirmar == true) {
+                          Navigator.pop(context, "excluir");
+                        }
+                      }),
                     ],
                   ),
                 ],
@@ -85,7 +108,7 @@ class DetalhesTarefaPage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ModoFocoPage(tarefa: tarefa),
+                      builder: (_) => ModoFocoPage(tarefa: tarefa),
                     ),
                   );
                 },
@@ -104,9 +127,9 @@ class DetalhesTarefaPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
+                    children: [
                       Icon(Icons.play_arrow, color: Colors.white),
                       SizedBox(width: 8),
                       Text(
@@ -149,13 +172,14 @@ class DetalhesTarefaPage extends StatelessWidget {
 class _Botao extends StatelessWidget {
   final String texto;
   final Color cor;
+  final VoidCallback onTap;
 
-  const _Botao(this.texto, this.cor);
+  const _Botao(this.texto, this.cor, this.onTap);
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {},
+      onPressed: onTap,
       style: ElevatedButton.styleFrom(
         backgroundColor: cor.withOpacity(0.15),
         foregroundColor: cor,
