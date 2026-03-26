@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ModoFocoPage extends StatefulWidget {
   final Map<String, dynamic> tarefa;
@@ -20,6 +21,8 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
   final TextEditingController controllerTempo =
       TextEditingController(text: "20");
 
+  double get progresso => tempoRestante / tempoTotal;
+
   void iniciar() {
     if (rodando) return;
 
@@ -30,6 +33,9 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
       } else {
         timer.cancel();
         rodando = false;
+
+        // 🔔 vibração/som
+        HapticFeedback.mediumImpact();
       }
     });
   }
@@ -75,7 +81,7 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
     final tarefa = widget.tarefa;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5), // 👈 fundo padrão
+      backgroundColor: const Color(0xFFF5F5F5),
 
       body: Center(
         child: Container(
@@ -91,11 +97,10 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
               ),
             ],
           ),
-
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 🔙 VOLTAR
+              // 🔙 voltar
               Align(
                 alignment: Alignment.topLeft,
                 child: GestureDetector(
@@ -120,41 +125,62 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
                 style: TextStyle(fontSize: 18, color: Colors.black54),
               ),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
 
-              // ⏱️ TEMPO
-              Text(
-                formatar(tempoRestante),
-                style: const TextStyle(
-                  fontSize: 55,
-                  fontWeight: FontWeight.bold,
-                ),
+              // ⭕ CRONÔMETRO CIRCULAR
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: 180,
+                    height: 180,
+                    child: CircularProgressIndicator(
+                      value: progresso,
+                      strokeWidth: 8,
+                      backgroundColor: Colors.grey[200],
+                      valueColor: const AlwaysStoppedAnimation(
+                        Color(0xFF7F00FF),
+                      ),
+                    ),
+                  ),
+
+                  Text(
+                    formatar(tempoRestante),
+                    style: const TextStyle(
+                      fontSize: 35,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
 
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
 
-              // ▶️ CONTROLES
+              // CONTROLES
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   IconButton(
                     onPressed: iniciar,
                     icon: const Icon(Icons.play_arrow, color: Colors.purple),
+                    iconSize: 32,
                   ),
                   IconButton(
                     onPressed: pausar,
                     icon: const Icon(Icons.pause, color: Colors.orange),
+                    iconSize: 32,
                   ),
                   IconButton(
                     onPressed: resetar,
                     icon: const Icon(Icons.restart_alt, color: Colors.red),
+                    iconSize: 32,
                   ),
                 ],
               ),
 
               const SizedBox(height: 15),
 
-              // ⌨️ INPUT TEMPO
+              // INPUT TEMPO
               Row(
                 children: [
                   Expanded(
@@ -176,12 +202,12 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
                   ElevatedButton(
                     onPressed: definirTempoCustom,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple,
+                      backgroundColor: const Color(0xFF7F00FF),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
                     ),
-                    child: const Text("Definir"),
+                    child: const Text("OK"),
                   )
                 ],
               ),
@@ -195,7 +221,7 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
 
               const SizedBox(height: 20),
 
-              // BOTÕES IGUAIS
+              // BOTÕES
               Row(
                 children: [
                   Expanded(
