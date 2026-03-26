@@ -38,7 +38,6 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           children: [
 
-            // 🔥 CENTRO (título + subtítulo)
             Expanded(
               child: Center(
                 child: Column(
@@ -48,21 +47,23 @@ class _SplashScreenState extends State<SplashScreen> {
                     const Text(
                       "TaskMaster",
                       style: TextStyle(
-                        fontSize: 48,
+                        fontSize: 50,
                         color: Colors.white,
                         fontFamily: 'ShareTechMono',
                         letterSpacing: 2,
+                        height: 1, // 👈 controla altura da linha
                       ),
                     ),
 
-                    const SizedBox(height: 4), // 🔥 bem colado
+                    const SizedBox(height: 2), // 👈 quase colado
 
                     const Text(
                       "Gerenciador de tarefas inteligentes",
                       style: TextStyle(
                         color: Colors.white70,
-                        fontSize: 14,
+                        fontSize: 15,
                         fontFamily: 'ShareTechMono',
+                        height: 1, // 👈 ISSO FAZ A DIFERENÇA
                       ),
                     ),
                   ],
@@ -70,7 +71,6 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
 
-            // 🔥 FRASE EMBAIXO (igual figma)
             Padding(
               padding: const EdgeInsets.only(bottom: 30),
               child: const Text(
