@@ -15,34 +15,61 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> tarefas = [
     {
       "nome": "Estudar UX",
-      "cor": Colors.red,
+      "prioridade": "alta",
+      "concluida": false,
+      "dataCriacao": DateTime.now().subtract(const Duration(minutes: 30))
+    },
+    {
+      "nome": "Academia",
+      "prioridade": "media",
       "concluida": false,
       "dataCriacao": DateTime.now().subtract(const Duration(minutes: 20))
     },
     {
-      "nome": "Academia",
-      "cor": Colors.yellow,
-      "concluida": false,
-      "dataCriacao": DateTime.now().subtract(const Duration(minutes: 10))
-    },
-    {
       "nome": "Fazer Trabalho",
-      "cor": Colors.green,
+      "prioridade": "baixa",
       "concluida": false,
       "dataCriacao": DateTime.now()
     },
   ];
 
+  Color _corPrioridade(String p) {
+    switch (p) {
+      case "alta":
+        return Colors.red;
+      case "media":
+        return Colors.yellow;
+      case "baixa":
+        return Colors.green;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  // 🔥 NOVA LÓGICA DE ORDENAÇÃO (sem esconder tarefas)
   List<Map<String, dynamic>> get tarefasOrdenadas {
     List<Map<String, dynamic>> lista = [...tarefas];
 
-    if (filtro == "prioridade") {
+    if (filtro == "alta" ||
+        filtro == "media" ||
+        filtro == "baixa") {
       lista.sort((a, b) {
-        return _prioridadeValor(a["cor"])
-            .compareTo(_prioridadeValor(b["cor"]));
+        if (a["prioridade"] == filtro && b["prioridade"] != filtro) {
+          return -1; // sobe
+        }
+        if (a["prioridade"] != filtro && b["prioridade"] == filtro) {
+          return 1; // desce
+        }
+        return 0;
       });
-    } else {
-      // MAIS ANTIGO → MAIS NOVO
+    }
+
+    if (filtro == "recente") {
+      lista.sort((a, b) =>
+          b["dataCriacao"].compareTo(a["dataCriacao"]));
+    }
+
+    if (filtro == "antigo") {
       lista.sort((a, b) =>
           a["dataCriacao"].compareTo(b["dataCriacao"]));
     }
@@ -50,18 +77,12 @@ class _HomePageState extends State<HomePage> {
     return lista;
   }
 
-  int _prioridadeValor(Color cor) {
-    if (cor == Colors.red) return 1;
-    if (cor == Colors.yellow) return 2;
-    return 3;
-  }
-
-  Color _corFundo(Color cor) {
-    return cor.withOpacity(0.15);
-  }
+  Color _corFundo(Color cor) => cor.withOpacity(0.15);
 
   @override
   Widget build(BuildContext context) {
+    final lista = tarefasOrdenadas;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
 
@@ -81,24 +102,36 @@ class _HomePageState extends State<HomePage> {
 
       body: Padding(
         padding: const EdgeInsets.all(20),
-        child: Column(
+        child: ListView(
           children: [
             // 🔽 FILTRO
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                const Text("Ordenar por:"),
+                const Text("Ordenar por: "),
                 DropdownButton<String>(
                   value: filtro,
                   underline: const SizedBox(),
                   items: const [
                     DropdownMenuItem(
-                      value: "recente",
-                      child: Text("Mais antigo"),
+                      value: "alta",
+                      child: Text("Prioridade alta 🔴"),
                     ),
                     DropdownMenuItem(
-                      value: "prioridade",
-                      child: Text("Prioridade"),
+                      value: "media",
+                      child: Text("Prioridade média 🟡"),
+                    ),
+                    DropdownMenuItem(
+                      value: "baixa",
+                      child: Text("Prioridade baixa 🟢"),
+                    ),
+                    DropdownMenuItem(
+                      value: "recente",
+                      child: Text("Mais recente"),
+                    ),
+                    DropdownMenuItem(
+                      value: "antigo",
+                      child: Text("Mais antigo"),
                     ),
                   ],
                   onChanged: (value) {
@@ -113,19 +146,11 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 15),
 
             // 📋 LISTA
-            Expanded(
-              child: ListView.builder(
-                itemCount: tarefasOrdenadas.length,
-                itemBuilder: (context, index) {
-                  final tarefa = tarefasOrdenadas[index];
-                  return _cardTarefa(context, tarefa);
-                },
-              ),
-            ),
+            ...lista.map((tarefa) => _cardTarefa(tarefa)),
 
             const SizedBox(height: 10),
 
-            // ➕ BOTÃO MAIS PROPORCIONAL
+            // ➕ BOTÃO
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -152,73 +177,50 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _cardTarefa(
-    BuildContext context,
-    Map<String, dynamic> tarefa,
-  ) {
+  Widget _cardTarefa(Map<String, dynamic> tarefa) {
+    final cor = _corPrioridade(tarefa["prioridade"]);
     final concluida = tarefa["concluida"];
-    final cor = tarefa["cor"];
 
-    return GestureDetector(
-      onTap: () async {
-        final resultado = await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => DetalhesTarefaPage(tarefa: tarefa),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: _corFundo(cor),
+        borderRadius: BorderRadius.circular(16),
+      ),
+
+      child: Row(
+        children: [
+          // 🔥 VOLTOU O CLICK PRA RIScar
+          GestureDetector(
+            onTap: () {
+              setState(() {
+                tarefa["concluida"] = !tarefa["concluida"];
+              });
+            },
+            child: Icon(
+              concluida
+                  ? Icons.check_circle
+                  : Icons.radio_button_unchecked,
+              color: cor,
+            ),
           ),
-        );
 
-        if (resultado == true) {
-          setState(() {
-            tarefa["concluida"] = true;
-          });
-        } else if (resultado == "excluir") {
-          setState(() {
-            tarefas.remove(tarefa);
-          });
-        }
-      },
+          const SizedBox(width: 12),
 
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: _corFundo(cor),
-          borderRadius: BorderRadius.circular(16),
-        ),
-
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  tarefa["concluida"] = !tarefa["concluida"];
-                });
-              },
-              child: Icon(
-                concluida
-                    ? Icons.check_circle
-                    : Icons.radio_button_unchecked,
-                color: cor,
+          Expanded(
+            child: Text(
+              tarefa["nome"],
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                decoration: concluida
+                    ? TextDecoration.lineThrough
+                    : TextDecoration.none,
               ),
             ),
-
-            const SizedBox(width: 12),
-
-            Expanded(
-              child: Text(
-                tarefa["nome"],
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  decoration: concluida
-                      ? TextDecoration.lineThrough
-                      : TextDecoration.none,
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
