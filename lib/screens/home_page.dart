@@ -10,19 +10,55 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String filtro = "recente";
+
   List<Map<String, dynamic>> tarefas = [
-    {"nome": "Estudar UX", "cor": Colors.red, "concluida": false},
+    {
+      "nome": "Estudar UX",
+      "cor": Colors.red,
+      "concluida": false,
+      "dataCriacao": DateTime.now().subtract(const Duration(minutes: 20))
+    },
     {
       "nome": "Academia",
-      "cor": Color(0xFFFFD86C),
-      "concluida": false
+      "cor": Colors.yellow,
+      "concluida": false,
+      "dataCriacao": DateTime.now().subtract(const Duration(minutes: 10))
     },
     {
       "nome": "Fazer Trabalho",
-      "cor": Color(0xFF70FF75),
-      "concluida": false
+      "cor": Colors.green,
+      "concluida": false,
+      "dataCriacao": DateTime.now()
     },
   ];
+
+  List<Map<String, dynamic>> get tarefasOrdenadas {
+    List<Map<String, dynamic>> lista = [...tarefas];
+
+    if (filtro == "prioridade") {
+      lista.sort((a, b) {
+        return _prioridadeValor(a["cor"])
+            .compareTo(_prioridadeValor(b["cor"]));
+      });
+    } else {
+      // MAIS ANTIGO → MAIS NOVO
+      lista.sort((a, b) =>
+          a["dataCriacao"].compareTo(b["dataCriacao"]));
+    }
+
+    return lista;
+  }
+
+  int _prioridadeValor(Color cor) {
+    if (cor == Colors.red) return 1;
+    if (cor == Colors.yellow) return 2;
+    return 3;
+  }
+
+  Color _corFundo(Color cor) {
+    return cor.withOpacity(0.15);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,36 +79,74 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
 
-      body: ListView.builder(
-        padding: const EdgeInsets.fromLTRB(20, 10, 20, 100),
-        itemCount: tarefas.length,
-        itemBuilder: (context, index) {
-          final tarefa = tarefas[index];
-          return _cardTarefa(context, tarefa, index);
-        },
-      ),
-
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 20, right: 10),
-        child: SizedBox(
-          width: 65,
-          height: 65,
-          child: FloatingActionButton(
-            backgroundColor: Colors.deepPurple,
-            elevation: 6,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            // 🔽 FILTRO
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text("Ordenar por:"),
+                DropdownButton<String>(
+                  value: filtro,
+                  underline: const SizedBox(),
+                  items: const [
+                    DropdownMenuItem(
+                      value: "recente",
+                      child: Text("Mais antigo"),
+                    ),
+                    DropdownMenuItem(
+                      value: "prioridade",
+                      child: Text("Prioridade"),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      filtro = value!;
+                    });
+                  },
+                ),
+              ],
             ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => NovaTarefaPage()),
-              );
-            },
-            child: const Icon(Icons.add, size: 32),
-          ),
+
+            const SizedBox(height: 15),
+
+            // 📋 LISTA
+            Expanded(
+              child: ListView.builder(
+                itemCount: tarefasOrdenadas.length,
+                itemBuilder: (context, index) {
+                  final tarefa = tarefasOrdenadas[index];
+                  return _cardTarefa(context, tarefa);
+                },
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            // ➕ BOTÃO MAIS PROPORCIONAL
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => NovaTarefaPage()),
+                  );
+                },
+                icon: const Icon(Icons.add),
+                label: const Text("Nova Tarefa"),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -81,9 +155,9 @@ class _HomePageState extends State<HomePage> {
   Widget _cardTarefa(
     BuildContext context,
     Map<String, dynamic> tarefa,
-    int index,
   ) {
     final concluida = tarefa["concluida"];
+    final cor = tarefa["cor"];
 
     return GestureDetector(
       onTap: () async {
@@ -96,39 +170,21 @@ class _HomePageState extends State<HomePage> {
 
         if (resultado == true) {
           setState(() {
-            tarefas[index]["concluida"] = true;
+            tarefa["concluida"] = true;
           });
         } else if (resultado == "excluir") {
           setState(() {
-            tarefas.removeAt(index);
-          });
-        } else if (resultado is Map) {
-          setState(() {
-            tarefas[index]["nome"] = resultado["nome"];
-            tarefas[index]["data"] = resultado["data"];
-            tarefas[index]["observacao"] = resultado["observacao"];
+            tarefas.remove(tarefa);
           });
         }
       },
 
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        margin: const EdgeInsets.only(bottom: 14),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: tarefa["cor"].withOpacity(0.4),
-            width: 1.5,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          color: _corFundo(cor),
+          borderRadius: BorderRadius.circular(16),
         ),
 
         child: Row(
@@ -136,37 +192,25 @@ class _HomePageState extends State<HomePage> {
             GestureDetector(
               onTap: () {
                 setState(() {
-                  tarefas[index]["concluida"] =
-                      !tarefas[index]["concluida"];
+                  tarefa["concluida"] = !tarefa["concluida"];
                 });
               },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: 26,
-                height: 26,
-                decoration: BoxDecoration(
-                  color: concluida ? Colors.green : Colors.transparent,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: concluida ? Colors.green : Colors.grey,
-                    width: 2,
-                  ),
-                ),
-                child: concluida
-                    ? const Icon(Icons.check, size: 18, color: Colors.white)
-                    : null,
+              child: Icon(
+                concluida
+                    ? Icons.check_circle
+                    : Icons.radio_button_unchecked,
+                color: cor,
               ),
             ),
 
-            const SizedBox(width: 14),
+            const SizedBox(width: 12),
 
             Expanded(
               child: Text(
                 tarefa["nome"],
                 style: TextStyle(
-                  fontSize: 17,
+                  fontSize: 16,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
                   decoration: concluida
                       ? TextDecoration.lineThrough
                       : TextDecoration.none,
