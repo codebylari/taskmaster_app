@@ -80,12 +80,30 @@ class _HomePageState extends State<HomePage> {
           ),
         );
 
+        // ✅ CONCLUIR
         if (resultado == true) {
           setState(() {
             tarefas[index]["concluida"] = true;
           });
         }
+
+        // 🗑️ EXCLUIR
+        else if (resultado == "excluir") {
+          setState(() {
+            tarefas.removeAt(index);
+          });
+        }
+
+        // ✏️ EDITAR
+        else if (resultado is Map) {
+          setState(() {
+            tarefas[index]["nome"] = resultado["nome"];
+            tarefas[index]["data"] = resultado["data"];
+            tarefas[index]["observacao"] = resultado["observacao"];
+          });
+        }
       },
+
       child: Container(
         margin: const EdgeInsets.only(bottom: 15),
         padding: const EdgeInsets.all(16),

@@ -29,7 +29,7 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
   void salvar() {
     if (nomeController.text.isEmpty) return;
 
-    // 💚 feedback bonito
+    // 💚 feedback
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text("Tarefa editada com sucesso!"),
@@ -38,7 +38,6 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
       ),
     );
 
-    // ⏳ pequeno delay pra mostrar o feedback
     Future.delayed(const Duration(milliseconds: 600), () {
       Navigator.pop(context, {
         "nome": nomeController.text,
@@ -99,7 +98,6 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
 
               const SizedBox(height: 25),
 
-              // 💜 BOTÃO BONITO
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(

@@ -9,8 +9,13 @@ class ExcluirTarefaDialog extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
-      title: const Text("Excluir tarefa"),
-      content: const Text("Tem certeza que deseja excluir essa tarefa?"),
+      title: const Text(
+        "Excluir tarefa",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      content: const Text(
+        "Tem certeza que deseja excluir essa tarefa?",
+      ),
 
       actions: [
         TextButton(
@@ -26,6 +31,9 @@ class ExcluirTarefaDialog extends StatelessWidget {
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.red,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
           child: const Text("Excluir"),
         ),
