@@ -38,13 +38,19 @@ class DetalhesTarefaPage extends StatelessWidget {
 
             const SizedBox(height: 25),
 
-            // 📦 Card
+            // 💎 CARD
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(15),
+                color: Colors.white.withOpacity(0.7), // mais moderno
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 10,
+                  ),
+                ],
               ),
 
               child: Column(
@@ -58,7 +64,6 @@ class DetalhesTarefaPage extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                  // 🔥 BOTÕES PADRONIZADOS
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: const [
@@ -72,7 +77,7 @@ class DetalhesTarefaPage extends StatelessWidget {
 
             const SizedBox(height: 30),
 
-            // 🎯 Ação
+            // 🚀 BOTÃO FOCO
             Center(
               child: GestureDetector(
                 onTap: () {},
@@ -113,9 +118,28 @@ class DetalhesTarefaPage extends StatelessWidget {
       ),
     );
   }
+
+  // 🔥 FUNÇÃO QUE FALTAVA
+  Widget _info(String titulo, String valor) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: RichText(
+        text: TextSpan(
+          style: const TextStyle(color: Colors.black87),
+          children: [
+            TextSpan(
+              text: "$titulo: ",
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+            TextSpan(text: valor),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-// 🔥 COMPONENTE REUTILIZÁVEL (deixa o código menor)
+// 🔥 BOTÃO PADRONIZADO
 class _Botao extends StatelessWidget {
   final String texto;
   final Color cor;
@@ -126,7 +150,19 @@ class _Botao extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {},
-      child: Text(texto),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: cor.withOpacity(0.15),
+        foregroundColor: cor,
+        elevation: 0,
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+      child: Text(
+        texto,
+        style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
     );
   }
 }
