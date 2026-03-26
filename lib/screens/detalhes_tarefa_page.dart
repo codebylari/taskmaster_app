@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'modo_foco_page.dart'; // 👈 IMPORTA A TELA
 
 class DetalhesTarefaPage extends StatelessWidget {
   final Map<String, dynamic> tarefa;
@@ -43,7 +44,7 @@ class DetalhesTarefaPage extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.7), // mais moderno
+                color: Colors.white.withOpacity(0.7),
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -80,7 +81,14 @@ class DetalhesTarefaPage extends StatelessWidget {
             // 🚀 BOTÃO FOCO
             Center(
               child: GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ModoFocoPage(tarefa: tarefa),
+                    ),
+                  );
+                },
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 30, vertical: 14),
@@ -119,7 +127,6 @@ class DetalhesTarefaPage extends StatelessWidget {
     );
   }
 
-  // 🔥 FUNÇÃO QUE FALTAVA
   Widget _info(String titulo, String valor) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
@@ -139,7 +146,6 @@ class DetalhesTarefaPage extends StatelessWidget {
   }
 }
 
-// 🔥 BOTÃO PADRONIZADO
 class _Botao extends StatelessWidget {
   final String texto;
   final Color cor;
