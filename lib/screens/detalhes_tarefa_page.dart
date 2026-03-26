@@ -8,7 +8,7 @@ class DetalhesTarefaPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFEDEDED),
+      backgroundColor: const Color(0xFFF5F5F5),
 
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -18,7 +18,7 @@ class DetalhesTarefaPage extends StatelessWidget {
 
             const SizedBox(height: 40),
 
-            // 🔙 Voltar + título
+            // 🔙 HEADER
             Row(
               children: [
                 IconButton(
@@ -28,54 +28,90 @@ class DetalhesTarefaPage extends StatelessWidget {
                 const SizedBox(width: 10),
                 const Text(
                   "Detalhes da Tarefa",
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 25),
 
-            // 📦 Card
+            // ✨ CARD COM TRANSPARÊNCIA
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(15),
+                color: Colors.white.withOpacity(0.6), // 🔥 transparência
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.white.withOpacity(0.3)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 15,
+                  ),
+                ],
               ),
+
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
 
-                  Text("Nome: ${tarefa["nome"]}"),
-                  const SizedBox(height: 10),
-
-                  const Text("Data: 20/04/2026"),
-                  const Text("Observação: Provas em Breve"),
-                  const Text("Prioridade: Alta"),
+                  _info("Nome", tarefa["nome"]),
+                  _info("Data", "20/04/2026"),
+                  _info("Observação", "Provas em Breve"),
+                  _info("Prioridade", "Alta"),
 
                   const SizedBox(height: 20),
 
-                  // 🔥 BOTÕES PADRONIZADOS
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: const [
-                      _Botao("Editar"),
-                      _Botao("Excluir"),
+                      _Botao("Editar", Colors.blue),
+                      _Botao("Excluir", Colors.red),
                     ],
                   ),
                 ],
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
 
-            // 🎯 Ação
+            // 🔥 BOTÃO INICIAR FOCO (DESTAQUE)
             Center(
-              child: TextButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.play_arrow, color: Colors.red),
-                label: const Text("Iniciar foco"),
+              child: GestureDetector(
+                onTap: () {},
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 30, vertical: 14),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF7F00FF), Color(0xFFE100FF)],
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.purple.withOpacity(0.4),
+                        blurRadius: 12,
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(Icons.play_arrow, color: Colors.white),
+                      SizedBox(width: 8),
+                      Text(
+                        "Iniciar foco",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
           ],
@@ -83,18 +119,47 @@ class DetalhesTarefaPage extends StatelessWidget {
       ),
     );
   }
+
+  // 📌 COMPONENTE DE TEXTO
+  Widget _info(String titulo, String valor) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: RichText(
+        text: TextSpan(
+          style: const TextStyle(color: Colors.black87),
+          children: [
+            TextSpan(
+              text: "$titulo: ",
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+            TextSpan(text: valor),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
-// 🔥 COMPONENTE REUTILIZÁVEL (deixa o código menor)
+// 🔥 BOTÕES BONITOS
 class _Botao extends StatelessWidget {
   final String texto;
+  final Color cor;
 
-  const _Botao(this.texto);
+  const _Botao(this.texto, this.cor);
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () {},
+      style: ElevatedButton.styleFrom(
+        backgroundColor: cor.withOpacity(0.2),
+        foregroundColor: cor,
+        elevation: 0,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
       child: Text(texto),
     );
   }
