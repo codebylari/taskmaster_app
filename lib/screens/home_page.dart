@@ -95,13 +95,24 @@ class _HomePageState extends State<HomePage> {
         ),
         child: Row(
           children: [
-            Icon(
-              concluida
-                  ? Icons.check_box
-                  : Icons.check_box_outline_blank,
-              color: concluida ? Colors.green : Colors.grey,
+            // ✅ CHECKBOX CLICÁVEL
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  tarefas[index]["concluida"] =
+                      !tarefas[index]["concluida"];
+                });
+              },
+              child: Icon(
+                concluida
+                    ? Icons.check_box
+                    : Icons.check_box_outline_blank,
+                color: concluida ? Colors.green : Colors.grey,
+              ),
             ),
+
             const SizedBox(width: 12),
+
             Expanded(
               child: Text(
                 tarefa["nome"],
