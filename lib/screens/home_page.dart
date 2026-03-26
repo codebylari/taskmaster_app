@@ -1,148 +1,122 @@
 import 'package:flutter/material.dart';
-import 'package:meu_app/screens/nova_tarefa_page.dart';
-import 'package:meu_app/screens/detalhes_tarefa_page.dart';
+import 'detalhes_tarefa_page.dart';
+import 'nova_tarefa_page.dart'; // ✅ ADICIONADO
 
-class HomePage extends StatefulWidget {
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-
-  List<Map<String, dynamic>> tarefas = [
-    {"nome": "Estudar UX", "cor": Color.fromARGB(255, 255, 17, 0), "concluido": false},
-    {"nome": "Academia", "cor": Color.fromARGB(255, 255, 244, 144), "concluido": false},
-    {"nome": "Fazer Trabalho", "cor": Color.fromARGB(255, 84, 255, 90), "concluido": false},
-  ];
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFEDEDED),
+      backgroundColor: const Color(0xFFF5F5F5),
 
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 40),
+      // 🔥 APPBAR MODERNA
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        title: const Text(
+          "Minhas Tarefas",
+          style: TextStyle(
+            color: Colors.black87,
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
 
-            Text(
-              "Minhas Tarefas",
-              style: TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.w500,
-              ),
+      // 📋 LISTA
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        children: [
+          _cardTarefa(context, "Estudar UX", Colors.red),
+          _cardTarefa(context, "Academia", Colors.amber),
+          _cardTarefa(context, "Fazer Trabalho", Colors.green),
+        ],
+      ),
+
+      // ➕ BOTÃO FLUTUANTE FUNCIONANDO
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: const LinearGradient(
+            colors: [Color(0xFF7F00FF), Color(0xFFE100FF)],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 10,
             ),
-
-            Divider(color: Colors.grey.shade300),
-
-            ...List.generate(tarefas.length, (index) {
-              return tarefa(index);
-            }),
-
-            SizedBox(height: 10),
-
-            // 🔥 BOTÃO COM MÃOZINHA
-            Align(
-              alignment: Alignment.centerRight,
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => NovaTarefaPage(),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Colors.blue,
-                          Colors.purple,
-                          Colors.pink,
-                        ],
-                      ),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(Icons.add, color: Colors.white, size: 30),
-                  ),
-                ),
-              ),
-            ),
-
-            Divider(color: Colors.grey.shade300),
-
-            Spacer(),
           ],
+        ),
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => NovaTarefaPage(),
+              ),
+            );
+          },
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: const Icon(Icons.add, size: 28),
         ),
       ),
     );
   }
 
-  Widget tarefa(int index) {
-    var item = tarefas[index];
-
-    return Column(
-      children: [
-        MouseRegion(
-          cursor: SystemMouseCursors.click, // 🔥 mãozinha na tarefa
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => DetalhesTarefaPage(tarefa: item),
-                  ),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  children: [
-                    Checkbox(
-                      value: item["concluido"],
-                      onChanged: (v) {
-                        setState(() {
-                          item["concluido"] = v!;
-                        });
-                      },
-                    ),
-
-                    SizedBox(width: 10),
-
-                    Expanded(
-                      child: Text(
-                        item["nome"],
-                        style: TextStyle(
-                          fontSize: 18,
-                          decoration: item["concluido"]
-                              ? TextDecoration.lineThrough
-                              : TextDecoration.none,
-                        ),
-                      ),
-                    ),
-
-                    CircleAvatar(
-                      radius: 6,
-                      backgroundColor: item["cor"],
-                    ),
-                  ],
+  // 🧾 CARD MODERNO
+  Widget _cardTarefa(BuildContext context, String nome, Color cor) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => DetalhesTarefaPage(
+              tarefa: {"nome": nome},
+            ),
+          ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 15),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.check_box_outline_blank, color: Colors.grey),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                nome,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
-          ),
+            Container(
+              width: 10,
+              height: 10,
+              decoration: BoxDecoration(
+                color: cor,
+                shape: BoxShape.circle,
+              ),
+            ),
+          ],
         ),
-
-        Divider(color: Colors.grey.shade300),
-      ],
+      ),
     );
   }
 }
