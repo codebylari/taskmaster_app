@@ -29,21 +29,10 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
   void salvar() {
     if (nomeController.text.isEmpty) return;
 
-    // 💚 feedback
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Tarefa editada com sucesso!"),
-        backgroundColor: Colors.green,
-        duration: Duration(milliseconds: 600),
-      ),
-    );
-
-    Future.delayed(const Duration(milliseconds: 600), () {
-      Navigator.pop(context, {
-        "nome": nomeController.text,
-        "data": dataController.text,
-        "observacao": obsController.text,
-      });
+    Navigator.pop(context, {
+      "nome": nomeController.text,
+      "data": dataController.text,
+      "observacao": obsController.text,
     });
   }
 
@@ -70,7 +59,6 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 🔙 HEADER
               Row(
                 children: [
                   IconButton(

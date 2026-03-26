@@ -67,7 +67,7 @@ class DetalhesTarefaPage extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      // ✏️ EDITAR
+                      // ✏️ EDITAR (CORRIGIDO)
                       _Botao("Editar", Colors.blue, () async {
                         final resultado = await Navigator.push(
                           context,
@@ -78,11 +78,11 @@ class DetalhesTarefaPage extends StatelessWidget {
                         );
 
                         if (resultado != null) {
-                          tarefa["nome"] = resultado["nome"];
+                          Navigator.pop(context, resultado); // 👈 ESSA LINHA RESOLVE TUDO
                         }
                       }),
 
-                      // 🗑️ EXCLUIR
+                      // 🗑️ EXCLUIR (já correto)
                       _Botao("Excluir", Colors.red, () async {
                         final confirmar = await showDialog(
                           context: context,
@@ -101,7 +101,7 @@ class DetalhesTarefaPage extends StatelessWidget {
 
             const SizedBox(height: 30),
 
-            // 🚀 BOTÃO FOCO
+            // 🚀 FOCO
             Center(
               child: GestureDetector(
                 onTap: () {
@@ -120,12 +120,6 @@ class DetalhesTarefaPage extends StatelessWidget {
                       colors: [Color(0xFF7F00FF), Color(0xFFE100FF)],
                     ),
                     borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.purple.withOpacity(0.4),
-                        blurRadius: 12,
-                      ),
-                    ],
                   ),
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,

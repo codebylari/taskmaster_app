@@ -14,12 +14,12 @@ class _HomePageState extends State<HomePage> {
     {"nome": "Estudar UX", "cor": Colors.red, "concluida": false},
     {
       "nome": "Academia",
-      "cor": Color.fromARGB(255, 255, 218, 108),
+      "cor": Color(0xFFFFD86C),
       "concluida": false
     },
     {
       "nome": "Fazer Trabalho",
-      "cor": Color.fromARGB(255, 112, 255, 117),
+      "cor": Color(0xFF70FF75),
       "concluida": false
     },
   ];
@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: const Color(0xFFF7F8FA),
 
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -37,14 +37,14 @@ class _HomePageState extends State<HomePage> {
           "Minhas Tarefas",
           style: TextStyle(
             color: Colors.black87,
-            fontSize: 22,
-            fontWeight: FontWeight.w600,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),
 
       body: ListView.builder(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 100),
         itemCount: tarefas.length,
         itemBuilder: (context, index) {
           final tarefa = tarefas[index];
@@ -52,14 +52,28 @@ class _HomePageState extends State<HomePage> {
         },
       ),
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => NovaTarefaPage()),
-          );
-        },
-        child: const Icon(Icons.add),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 20, right: 10),
+        child: SizedBox(
+          width: 65,
+          height: 65,
+          child: FloatingActionButton(
+            backgroundColor: Colors.deepPurple,
+            elevation: 6,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => NovaTarefaPage()),
+              );
+            },
+            child: const Icon(Icons.add, size: 32),
+          ),
+        ),
       ),
     );
   }
@@ -80,22 +94,15 @@ class _HomePageState extends State<HomePage> {
           ),
         );
 
-        // ✅ CONCLUIR
         if (resultado == true) {
           setState(() {
             tarefas[index]["concluida"] = true;
           });
-        }
-
-        // 🗑️ EXCLUIR
-        else if (resultado == "excluir") {
+        } else if (resultado == "excluir") {
           setState(() {
             tarefas.removeAt(index);
           });
-        }
-
-        // ✏️ EDITAR
-        else if (resultado is Map) {
+        } else if (resultado is Map) {
           setState(() {
             tarefas[index]["nome"] = resultado["nome"];
             tarefas[index]["data"] = resultado["data"];
@@ -104,16 +111,28 @@ class _HomePageState extends State<HomePage> {
         }
       },
 
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 15),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        margin: const EdgeInsets.only(bottom: 14),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: tarefa["cor"].withOpacity(0.4),
+            width: 1.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
+
         child: Row(
           children: [
-            // ✅ CHECKBOX CLICÁVEL
             GestureDetector(
               onTap: () {
                 setState(() {
@@ -121,21 +140,33 @@ class _HomePageState extends State<HomePage> {
                       !tarefas[index]["concluida"];
                 });
               },
-              child: Icon(
-                concluida
-                    ? Icons.check_box
-                    : Icons.check_box_outline_blank,
-                color: concluida ? Colors.green : Colors.grey,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                width: 26,
+                height: 26,
+                decoration: BoxDecoration(
+                  color: concluida ? Colors.green : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: concluida ? Colors.green : Colors.grey,
+                    width: 2,
+                  ),
+                ),
+                child: concluida
+                    ? const Icon(Icons.check, size: 18, color: Colors.white)
+                    : null,
               ),
             ),
 
-            const SizedBox(width: 12),
+            const SizedBox(width: 14),
 
             Expanded(
               child: Text(
                 tarefa["nome"],
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
                   decoration: concluida
                       ? TextDecoration.lineThrough
                       : TextDecoration.none,
