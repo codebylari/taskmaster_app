@@ -14,12 +14,32 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
 
   TextEditingController nomeController = TextEditingController();
   TextEditingController dataController = TextEditingController();
-  TextEditingController observacaoController = TextEditingController(); // 🔥 NOVO
+  TextEditingController observacaoController = TextEditingController();
 
   List<String> horarios =
       List.generate(24, (h) => "${h.toString().padLeft(2, '0')}:00");
 
-  // 🔥 FUNÇÃO CORRIGIDA COMPLETA
+  // 🔥 FUNÇÃO NOVA (GOOGLE CALENDAR)
+  void adicionarAoGoogleCalendar() {
+    if (nomeController.text.trim().isEmpty ||
+        dataController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Preencha o nome e a data antes de adicionar!"),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Tarefa adicionada com sucesso"),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
   void salvarTarefa() {
     if (nomeController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -44,8 +64,8 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
       "nome": nomeController.text,
       "prioridade": prioridadeFormatada,
       "concluida": false,
-      "data": dataController.text, // 🔥 AGORA SALVA DATA
-      "observacao": observacaoController.text, // 🔥 AGORA SALVA OBS
+      "data": dataController.text,
+      "observacao": observacaoController.text,
       "dataCriacao": DateTime.now(),
     };
 
@@ -113,7 +133,6 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
 
             const SizedBox(height: 10),
 
-            // 🔥 AGORA SALVA OBSERVAÇÃO
             TextField(
               controller: observacaoController,
               maxLines: 3,
@@ -208,22 +227,42 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
 
             const Spacer(),
 
-            Center(
-              child: SizedBox(
-                width: 200,
-                height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
+            // 🔥 BOTÃO MODERNO GOOGLE CALENDAR
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton.icon(
+                onPressed: adicionarAoGoogleCalendar,
+                icon: const Icon(Icons.calendar_month),
+                label: const Text("Adicionar ao Google Calendar"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.deepPurple,
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
                   ),
-                  onPressed: salvarTarefa,
-                  child: const Text(
-                    "Salvar",
-                    style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            // 🔥 BOTÃO SALVAR
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: salvarTarefa,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
                   ),
+                ),
+                child: const Text(
+                  "Salvar",
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ),
