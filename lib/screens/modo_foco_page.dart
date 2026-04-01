@@ -25,8 +25,8 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
 
   void iniciar() {
     if (rodando) return;
+    setState(() => rodando = true);
 
-    rodando = true;
     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (tempoRestante > 0) {
         setState(() => tempoRestante--);
@@ -40,7 +40,7 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
 
   void pausar() {
     timer?.cancel();
-    rodando = false;
+    setState(() => rodando = false);
   }
 
   void resetar() {
@@ -119,168 +119,125 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
   Widget build(BuildContext context) {
     final tarefa = widget.tarefa;
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
 
+      appBar: AppBar(
+        title: const Text("Modo Foco"),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+      ),
+
       body: Center(
-        child: Container(
-          width: 340,
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: theme.cardColor,
-            borderRadius: BorderRadius.circular(25),
 
-            // 🔥 borda no dark + sombra leve
-            border: Border.all(color: theme.dividerColor),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-              ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // 🔙 VOLTAR
-              Align(
-                alignment: Alignment.topLeft,
-                child: GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [Color(0xFF7F00FF), Color(0xFFE100FF)],
-                      ),
-                    ),
-                    child: const Icon(Icons.arrow_back, color: Colors.white),
-                  ),
-                ),
+          // 🔥 AQUI É O SEGREDO
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: theme.cardColor,
+                borderRadius: BorderRadius.circular(20),
+
+                border: isDark
+                    ? Border.all(color: Colors.white.withOpacity(0.08))
+                    : null,
+
+                boxShadow: isDark
+                    ? []
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
               ),
 
-              const SizedBox(height: 10),
-
-              Text(
-                "Modo Foco",
-                style: TextStyle(
-                  fontSize: 18,
-                  color: theme.textTheme.bodyMedium?.color,
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // ⭕ CRONÔMETRO
-              Stack(
-                alignment: Alignment.center,
+              child: Column(
                 children: [
-                  SizedBox(
-                    width: 180,
-                    height: 180,
-                    child: CircularProgressIndicator(
-                      value: progresso,
-                      strokeWidth: 8,
-                      backgroundColor: theme.dividerColor,
-                      valueColor: const AlwaysStoppedAnimation(
-                        Color(0xFF7F00FF),
-                      ),
-                    ),
-                  ),
                   Text(
                     formatar(tempoRestante),
                     style: TextStyle(
-                      fontSize: 35,
+                      fontSize: 40,
                       fontWeight: FontWeight.bold,
                       color: theme.textTheme.bodyLarge?.color,
                     ),
                   ),
-                ],
-              ),
 
-              const SizedBox(height: 20),
+                  const SizedBox(height: 20),
 
-              // ▶️ CONTROLES
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: iniciar,
-                    icon: const Icon(Icons.play_arrow, color: Colors.purple),
+                  CircularProgressIndicator(
+                    value: progresso,
+                    strokeWidth: 8,
+                    backgroundColor: theme.dividerColor,
+                    valueColor: const AlwaysStoppedAnimation(
+                      Color(0xFF7F00FF),
+                    ),
                   ),
-                  IconButton(
-                    onPressed: pausar,
-                    icon: const Icon(Icons.pause, color: Colors.orange),
-                  ),
-                  IconButton(
-                    onPressed: resetar,
-                    icon: const Icon(Icons.restart_alt, color: Colors.red),
-                  ),
-                ],
-              ),
 
-              const SizedBox(height: 15),
+                  const SizedBox(height: 20),
 
-              // ⌨️ INPUT
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: controllerTempo,
-                      keyboardType: TextInputType.number,
-                      style: TextStyle(color: theme.textTheme.bodyLarge?.color),
-                      decoration: InputDecoration(
-                        hintText: "Minutos",
-                        hintStyle: TextStyle(color: theme.hintColor),
-                        filled: true,
-                        fillColor: theme.cardColor,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide(color: theme.dividerColor),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(onPressed: iniciar, icon: const Icon(Icons.play_arrow)),
+                      IconButton(onPressed: pausar, icon: const Icon(Icons.pause)),
+                      IconButton(onPressed: resetar, icon: const Icon(Icons.restart_alt)),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: controllerTempo,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            hintText: "Minutos",
+                            filled: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: definirTempoCustom,
+                        child: const Text("OK"),
+                      )
+                    ],
                   ),
-                  const SizedBox(width: 10),
-                  ElevatedButton(
-                    onPressed: definirTempoCustom,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF7F00FF),
-                    ),
-                    child: const Text("OK"),
-                  )
-                ],
-              ),
 
-              const SizedBox(height: 15),
+                  const SizedBox(height: 20),
 
-              // 📋 INFO
-              Text("Nome: ${tarefa['nome'] ?? ''}",
-                  style: TextStyle(color: theme.textTheme.bodyMedium?.color)),
-              Text("Data: ${tarefa['data'] ?? ''}",
-                  style: TextStyle(color: theme.textTheme.bodyMedium?.color)),
-              Text("Obs: ${tarefa['observacao'] ?? ''}",
-                  style: TextStyle(color: theme.textTheme.bodyMedium?.color)),
+                  Text("Nome: ${tarefa['nome'] ?? ''}"),
+                  Text("Data: ${tarefa['data'] ?? ''}"),
+                  Text("Obs: ${tarefa['observacao'] ?? ''}"),
 
-              const SizedBox(height: 20),
+                  const SizedBox(height: 25),
 
-              // 🔘 BOTÕES
-              Row(
-                children: [
-                  Expanded(
-                    child: botao("Concluir", Colors.green, concluirTarefa),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: botao("Sair", Colors.red, () {
-                      Navigator.pop(context);
-                    }),
+                  Row(
+                    children: [
+                      Expanded(child: botao("Concluir", Colors.green, concluirTarefa)),
+                      const SizedBox(width: 10),
+                      Expanded(child: botao("Sair", Colors.red, () {
+                        Navigator.pop(context);
+                      })),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -295,7 +252,7 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
         style: ElevatedButton.styleFrom(
           backgroundColor: cor.withOpacity(0.9),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(14),
           ),
         ),
         child: Text(texto),

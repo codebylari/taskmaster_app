@@ -75,6 +75,7 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -101,7 +102,7 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
 
             TextField(
               controller: nomeController,
-              decoration: inputStyle("Nome"),
+              decoration: inputStyle("Nome", isDark),
               style: TextStyle(color: theme.textTheme.bodyLarge?.color),
             ),
 
@@ -112,7 +113,7 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
               child: TextField(
                 controller: dataController,
                 readOnly: true,
-                decoration: inputStyle("Data").copyWith(
+                decoration: inputStyle("Data", isDark).copyWith(
                   suffixIcon: Icon(Icons.calendar_today, color: theme.iconTheme.color),
                 ),
                 style: TextStyle(color: theme.textTheme.bodyLarge?.color),
@@ -143,7 +144,7 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
             TextField(
               controller: observacaoController,
               maxLines: 3,
-              decoration: inputStyle("Observação"),
+              decoration: inputStyle("Observação", isDark),
               style: TextStyle(color: theme.textTheme.bodyLarge?.color),
             ),
 
@@ -162,11 +163,11 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                prioridadeBox("Alta", Colors.red),
+                prioridadeBox("Alta", Colors.red, isDark),
                 const SizedBox(width: 10),
-                prioridadeBox("Média", Colors.amber),
+                prioridadeBox("Média", const Color.fromARGB(255, 255, 213, 86), isDark),
                 const SizedBox(width: 10),
-                prioridadeBox("Baixa", Colors.green),
+                prioridadeBox("Baixa", const Color.fromARGB(255, 129, 255, 133), isDark),
               ],
             ),
 
@@ -263,43 +264,34 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
     );
   }
 
-  // 🔥 AQUI FOI A CORREÇÃO PRINCIPAL
-  InputDecoration inputStyle(String label) {
-    final theme = Theme.of(context);
-
+  InputDecoration inputStyle(String label, bool isDark) {
     return InputDecoration(
       labelText: label,
-      labelStyle: TextStyle(color: theme.hintColor),
       filled: true,
-      fillColor: theme.cardColor,
+      fillColor: isDark ? const Color(0xFF1E1E1E) : Colors.grey[100],
 
+      // ❌ REMOVE BORDA PESADA
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(
-          color: theme.dividerColor,
-          width: 1,
-        ),
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide.none,
       ),
 
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(
-          color: theme.dividerColor,
-          width: 1,
-        ),
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide.none,
       ),
 
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide(
-          color: theme.primaryColor,
-          width: 2,
+          color: Colors.deepPurple.withOpacity(0.4), // suave
+          width: 1.5,
         ),
       ),
     );
   }
 
-  Widget prioridadeBox(String texto, Color cor) {
+  Widget prioridadeBox(String texto, Color cor, bool isDark) {
     final theme = Theme.of(context);
     bool selecionado = prioridade == texto;
 
@@ -312,12 +304,12 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          color: selecionado ? cor.withOpacity(0.15) : theme.cardColor,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: selecionado ? cor : theme.dividerColor,
-            width: 2,
-          ),
+          color: selecionado
+              ? cor.withOpacity(0.2)
+              : (isDark ? const Color(0xFF1E1E1E) : Colors.grey[200]),
+          borderRadius: BorderRadius.circular(20), // mais moderno
+
+          // ❌ borda pesada removida
         ),
         child: Row(
           children: [
