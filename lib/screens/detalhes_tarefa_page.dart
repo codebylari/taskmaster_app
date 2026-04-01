@@ -29,7 +29,7 @@ class DetalhesTarefaPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
 
-            // 💎 CARD SEM BORDA (MODERNO)
+            // 💎 CARD MODERNO COM BORDA SUAVE NO DARK
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -37,7 +37,13 @@ class DetalhesTarefaPage extends StatelessWidget {
                 color: theme.cardColor,
                 borderRadius: BorderRadius.circular(20),
 
-                // ✅ SOMBRA INTELIGENTE
+                // 🌙 DARK = BORDA SUAVE | ☀️ LIGHT = SOMBRA
+                border: isDark
+                    ? Border.all(
+                        color: Colors.white.withOpacity(0.08), // 👈 SUAVE
+                      )
+                    : null,
+
                 boxShadow: isDark
                     ? []
                     : [
