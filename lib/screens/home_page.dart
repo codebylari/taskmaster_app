@@ -20,7 +20,8 @@ class _HomePageState extends State<HomePage> {
       "concluida": false,
       "data": "25/03/2026",
       "observacao": "Revisar conceitos de UX",
-      "dataCriacao": DateTime.now().subtract(Duration(minutes: 30))
+      "dataCriacao": DateTime.now().subtract(Duration(minutes: 30)),
+      "ultimaModificacao": DateTime.now(), // ✅ NOVO
     },
     {
       "nome": "Academia",
@@ -28,7 +29,8 @@ class _HomePageState extends State<HomePage> {
       "concluida": false,
       "data": "26/03/2026",
       "observacao": "Treino de perna",
-      "dataCriacao": DateTime.now().subtract(Duration(minutes: 20))
+      "dataCriacao": DateTime.now().subtract(Duration(minutes: 20)),
+      "ultimaModificacao": DateTime.now(), // ✅ NOVO
     },
     {
       "nome": "Fazer Trabalho",
@@ -36,7 +38,8 @@ class _HomePageState extends State<HomePage> {
       "concluida": false,
       "data": "27/03/2026",
       "observacao": "Projeto Flutter",
-      "dataCriacao": DateTime.now()
+      "dataCriacao": DateTime.now(),
+      "ultimaModificacao": DateTime.now(), // ✅ NOVO
     },
   ];
 
@@ -79,6 +82,14 @@ class _HomePageState extends State<HomePage> {
 
   Color _corFundo(Color cor) => cor.withOpacity(0.15);
 
+  // ✅ NOVO: formatar data
+  String _formatarData(DateTime data) {
+    return "${data.day.toString().padLeft(2, '0')}/"
+        "${data.month.toString().padLeft(2, '0')} "
+        "${data.hour.toString().padLeft(2, '0')}:"
+        "${data.minute.toString().padLeft(2, '0')}";
+  }
+
   @override
   Widget build(BuildContext context) {
     final lista = tarefasOrdenadas;
@@ -95,7 +106,6 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
 
-        // ⚙️ BOTÃO DE CONFIGURAÇÃO ADICIONADO
         actions: [
           IconButton(
             icon: const Icon(Icons.settings, color: Colors.black),
@@ -198,6 +208,9 @@ class _HomePageState extends State<HomePage> {
             tarefa["data"] = resultado["data"];
             tarefa["observacao"] = resultado["observacao"];
             tarefa["prioridade"] = resultado["prioridade"];
+
+            // ✅ NOVO: atualiza ultima modificação
+            tarefa["ultimaModificacao"] = DateTime.now();
           });
         }
       },
@@ -224,15 +237,34 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const SizedBox(width: 12),
+
+            // ✅ ALTERADO (AGORA COM DATA + EDIÇÃO)
             Expanded(
-              child: Text(
-                tarefa["nome"],
-                style: TextStyle(
-                  fontSize: 16,
-                  decoration: concluida
-                      ? TextDecoration.lineThrough
-                      : TextDecoration.none,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    tarefa["nome"],
+                    style: TextStyle(
+                      fontSize: 16,
+                      decoration: concluida
+                          ? TextDecoration.lineThrough
+                          : TextDecoration.none,
+                    ),
+                  ),
+
+                  const SizedBox(height: 4),
+
+                  Text(
+                    "Data: ${tarefa["data"]}",
+                    style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                  ),
+
+                  Text(
+                    "Editado: ${_formatarData(tarefa["ultimaModificacao"])}",
+                    style: TextStyle(fontSize: 11, color: Colors.grey),
+                  ),
+                ],
               ),
             ),
           ],
