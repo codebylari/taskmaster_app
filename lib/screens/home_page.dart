@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'nova_tarefa_page.dart';
 import 'detalhes_tarefa_page.dart';
+import 'configuracoes_page.dart'; // ✅ ADICIONADO
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -52,11 +53,9 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  // 🔥 AQUI ESTÁ A MÁGICA DO FILTRO
   List<Map<String, dynamic>> get tarefasOrdenadas {
     List<Map<String, dynamic>> lista = [...tarefas];
 
-    // PRIORIDADE (SOBE SEM ESCONDER)
     if (filtro == "alta" || filtro == "media" || filtro == "baixa") {
       lista.sort((a, b) {
         if (a["prioridade"] == filtro && b["prioridade"] != filtro) return -1;
@@ -65,7 +64,6 @@ class _HomePageState extends State<HomePage> {
       });
     }
 
-    // TEMPO
     if (filtro == "recente") {
       lista.sort((a, b) =>
           b["dataCriacao"].compareTo(a["dataCriacao"]));
@@ -96,6 +94,21 @@ class _HomePageState extends State<HomePage> {
           "Minhas Tarefas",
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
+
+        // ⚙️ BOTÃO DE CONFIGURAÇÃO ADICIONADO
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings, color: Colors.black),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const ConfiguracoesPage(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
 
       body: Padding(
