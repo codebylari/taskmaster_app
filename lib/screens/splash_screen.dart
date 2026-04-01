@@ -74,7 +74,7 @@ class _SplashScreenState extends State<SplashScreen> {
             Padding(
               padding: const EdgeInsets.only(bottom: 30),
               child: const Text(
-                "“Organize sua vida”",
+                "“Deixando tudo sob controle”",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 14,
