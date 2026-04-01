@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'nova_tarefa_page.dart';
 import 'detalhes_tarefa_page.dart';
-import 'configuracoes_page.dart'; // ✅ ADICIONADO
+import 'configuracoes_page.dart'; 
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final bool modoEscuro;
+  final Function(bool) onTemaChanged;
+
+  const HomePage({
+    super.key,
+    required this.modoEscuro,
+    required this.onTemaChanged,
+  });
 
   @override
  State<HomePage> createState() => _HomePageState();
@@ -21,7 +28,7 @@ class _HomePageState extends State<HomePage> {
       "data": "25/03/2026",
       "observacao": "Revisar conceitos de UX",
       "dataCriacao": DateTime.now().subtract(Duration(minutes: 30)),
-      "ultimaModificacao": DateTime.now(), // ✅ NOVO
+      "ultimaModificacao": DateTime.now(),
     },
     {
       "nome": "Academia",
@@ -30,7 +37,7 @@ class _HomePageState extends State<HomePage> {
       "data": "26/03/2026",
       "observacao": "Treino de perna",
       "dataCriacao": DateTime.now().subtract(Duration(minutes: 20)),
-      "ultimaModificacao": DateTime.now(), // ✅ NOVO
+      "ultimaModificacao": DateTime.now(),
     },
     {
       "nome": "Fazer Trabalho",
@@ -39,7 +46,7 @@ class _HomePageState extends State<HomePage> {
       "data": "27/03/2026",
       "observacao": "Projeto Flutter",
       "dataCriacao": DateTime.now(),
-      "ultimaModificacao": DateTime.now(), // ✅ NOVO
+      "ultimaModificacao": DateTime.now(),
     },
   ];
 
@@ -82,7 +89,6 @@ class _HomePageState extends State<HomePage> {
 
   Color _corFundo(Color cor) => cor.withOpacity(0.15);
 
-  // ✅ NOVO: formatar data
   String _formatarData(DateTime data) {
     return "${data.day.toString().padLeft(2, '0')}/"
         "${data.month.toString().padLeft(2, '0')} "
@@ -95,27 +101,39 @@ class _HomePageState extends State<HomePage> {
     final lista = tarefasOrdenadas;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FA),
+      backgroundColor:
+          widget.modoEscuro ? Colors.black : const Color(0xFFF7F8FA),
 
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        title: const Text(
+        title: Text(
           "Minhas Tarefas",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: widget.modoEscuro ? Colors.white : Colors.black,
+          ),
         ),
 
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings, color: Colors.black),
-            onPressed: () {
-              Navigator.push(
+            icon: Icon(
+              Icons.settings,
+              color: widget.modoEscuro ? Colors.white : Colors.black,
+            ),
+            onPressed: () async {
+              final resultado = await Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => const ConfiguracoesPage(),
                 ),
               );
+
+              if (resultado != null) {
+                widget.onTemaChanged(resultado["modoEscuro"]);
+              }
             },
           ),
         ],
@@ -128,7 +146,14 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                const Text("Ordenar por: "),
+                Text(
+                  "Ordenar por: ",
+                  style: TextStyle(
+                    color: widget.modoEscuro
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+                ),
                 DropdownButton<String>(
                   value: filtro,
                   underline: const SizedBox(),
@@ -208,8 +233,6 @@ class _HomePageState extends State<HomePage> {
             tarefa["data"] = resultado["data"];
             tarefa["observacao"] = resultado["observacao"];
             tarefa["prioridade"] = resultado["prioridade"];
-
-            // ✅ NOVO: atualiza ultima modificação
             tarefa["ultimaModificacao"] = DateTime.now();
           });
         }
@@ -238,7 +261,6 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(width: 12),
 
-            // ✅ ALTERADO (AGORA COM DATA + EDIÇÃO)
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -247,6 +269,9 @@ class _HomePageState extends State<HomePage> {
                     tarefa["nome"],
                     style: TextStyle(
                       fontSize: 16,
+                      color: widget.modoEscuro
+                          ? Colors.white
+                          : Colors.black,
                       decoration: concluida
                           ? TextDecoration.lineThrough
                           : TextDecoration.none,
@@ -257,12 +282,23 @@ class _HomePageState extends State<HomePage> {
 
                   Text(
                     "Data: ${tarefa["data"]}",
-                    style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: widget.modoEscuro
+                          ? Colors.grey[400]
+                          : Colors.grey[700],
+                    ),
                   ),
 
+                  // 🔥 CORREÇÃO AQUI
                   Text(
-                    "Editado: ${_formatarData(tarefa["ultimaModificacao"])}",
-                    style: TextStyle(fontSize: 11, color: Colors.grey),
+                    "Editado: ${_formatarData(
+                      tarefa["ultimaModificacao"] ?? DateTime.now()
+                    )}",
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: Colors.grey,
+                    ),
                   ),
                 ],
               ),

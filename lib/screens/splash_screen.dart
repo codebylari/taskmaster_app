@@ -15,7 +15,12 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomePage()),
+        MaterialPageRoute(
+          builder: (context) => HomePage(
+            modoEscuro: false, // 🔥 ADICIONADO
+            onTemaChanged: (value) {}, // 🔥 ADICIONADO
+          ),
+        ),
       );
     });
   }
@@ -51,11 +56,11 @@ class _SplashScreenState extends State<SplashScreen> {
                         color: Colors.white,
                         fontFamily: 'ShareTechMono',
                         letterSpacing: 2,
-                        height: 1, // 👈 controla altura da linha
+                        height: 1,
                       ),
                     ),
 
-                    const SizedBox(height: 2), // 👈 quase colado
+                    const SizedBox(height: 2),
 
                     const Text(
                       "Gerenciador de tarefas inteligentes",
@@ -63,7 +68,7 @@ class _SplashScreenState extends State<SplashScreen> {
                         color: Colors.white70,
                         fontSize: 15,
                         fontFamily: 'ShareTechMono',
-                        height: 1, // 👈 ISSO FAZ A DIFERENÇA
+                        height: 1,
                       ),
                     ),
                   ],
