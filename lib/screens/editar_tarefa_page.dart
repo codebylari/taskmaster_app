@@ -56,110 +56,77 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
 
   @override
   Widget build(BuildContext context) {
-
-    // ✅ DETECTA SE ESTÁ EM DARK MODE
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF5F5F5),
+          isDark ? const Color(0xFF121212) : const Color(0xFFF7F8FA),
 
-      body: Center(
-        child: Container(
-          width: 380,
-          padding: const EdgeInsets.all(25),
-          decoration: BoxDecoration(
-            color:
-                isDark ? const Color(0xFF1E1E1E) : Colors.white,
-            borderRadius: BorderRadius.circular(25),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(isDark ? 0.6 : 0.05),
-                blurRadius: 20,
-              )
-            ],
-          ),
+      // ✅ APPBAR PADRÃO (igual outras telas)
+      appBar: AppBar(
+        title: const Text("Editar Tarefa"),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: isDark ? Colors.white : Colors.black,
+      ),
 
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    "Editar Tarefa",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
-                  ),
-                ],
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            campo("Nome", nomeController, isDark),
+            const SizedBox(height: 15),
+            campo("Data", dataController, isDark),
+            const SizedBox(height: 15),
+            campo("Observação", obsController, isDark),
+
+            const SizedBox(height: 25),
+
+            Text(
+              "Prioridade",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: isDark ? Colors.white : Colors.black,
               ),
+            ),
 
-              const SizedBox(height: 20),
+            const SizedBox(height: 10),
 
-              campo("Nome", nomeController, isDark),
-              const SizedBox(height: 15),
-              campo("Data", dataController, isDark),
-              const SizedBox(height: 15),
-              campo("Observação", obsController, isDark),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                botaoPrioridade("alta", "Alta 🔴", isDark),
+                botaoPrioridade("media", "Média 🟡", isDark),
+                botaoPrioridade("baixa", "Baixa 🟢", isDark),
+              ],
+            ),
 
-              const SizedBox(height: 20),
+            const SizedBox(height: 40),
 
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Prioridade",
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: salvar,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF7F00FF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+                child: const Text(
+                  "Salvar",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : Colors.black,
+                    color: Colors.white,
                   ),
                 ),
               ),
-
-              const SizedBox(height: 10),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  botaoPrioridade("alta", "Alta 🔴", isDark),
-                  botaoPrioridade("media", "Média 🟡", isDark),
-                  botaoPrioridade("baixa", "Baixa 🟢", isDark),
-                ],
-              ),
-
-              const SizedBox(height: 25),
-
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: salvar,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    backgroundColor: const Color(0xFF7F00FF),
-                  ),
-                  child: const Text(
-                    "Salvar",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -178,9 +145,11 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
         ),
         filled: true,
         fillColor:
-            isDark ? const Color(0xFF2A2A2A) : Colors.grey[100],
+            isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide.none,
         ),
       ),
@@ -196,13 +165,14 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
           prioridadeSelecionada = valor;
         });
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
         decoration: BoxDecoration(
           color: selecionado
               ? corPrioridade(valor).withOpacity(0.4)
               : (isDark
-                  ? const Color(0xFF2A2A2A)
+                  ? const Color(0xFF1E1E1E)
                   : Colors.grey[200]),
           borderRadius: BorderRadius.circular(12),
         ),
@@ -210,6 +180,7 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
           texto,
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ),

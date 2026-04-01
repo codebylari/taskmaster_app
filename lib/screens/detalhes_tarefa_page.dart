@@ -10,58 +10,43 @@ class DetalhesTarefaPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      // 🔥 AGORA GLOBAL
       backgroundColor: theme.scaffoldBackgroundColor,
 
-      body: Padding(
+      appBar: AppBar(
+        title: const Text("Detalhes da Tarefa"),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: isDark ? Colors.white : Colors.black,
+      ),
+
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 40),
 
-            // 🔙 HEADER
-            Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.arrow_back, color: theme.iconTheme.color),
-                  onPressed: () => Navigator.pop(context),
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  "Detalhes da Tarefa",
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600,
-                    color: theme.textTheme.titleLarge?.color,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 25),
-
-            // 💎 CARD
+            // 💎 CARD SEM BORDA (MODERNO)
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: theme.cardColor, // 🔥 corrigido
+                color: theme.cardColor,
                 borderRadius: BorderRadius.circular(20),
 
-                // 🔥 sombra leve no light / borda no dark
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                  ),
-                ],
-
-                border: Border.all(
-                  color: theme.dividerColor,
-                ),
+                // ✅ SOMBRA INTELIGENTE
+                boxShadow: isDark
+                    ? []
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,12 +56,11 @@ class DetalhesTarefaPage extends StatelessWidget {
                   _info(context, "Observação", tarefa["observacao"] ?? ""),
                   _info(context, "Prioridade", tarefa["prioridade"] ?? ""),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 25),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      // ✏️ EDITAR
                       _Botao("Editar", Colors.blue, () async {
                         final resultado = await Navigator.push(
                           context,
@@ -91,12 +75,11 @@ class DetalhesTarefaPage extends StatelessWidget {
                         }
                       }),
 
-                      // 🗑️ EXCLUIR
                       _Botao("Excluir", Colors.red, () async {
                         final confirmar = await showDialog(
                           context: context,
                           builder: (_) => AlertDialog(
-                            backgroundColor: theme.cardColor, // 🔥 dark
+                            backgroundColor: theme.cardColor,
                             title: Text(
                               "Excluir tarefa",
                               style: TextStyle(
@@ -136,10 +119,11 @@ class DetalhesTarefaPage extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 40),
 
-            // 🚀 FOCO
-            Center(
+            // 🚀 BOTÃO FOCO
+            SizedBox(
+              width: double.infinity,
               child: GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -150,16 +134,15 @@ class DetalhesTarefaPage extends StatelessWidget {
                   );
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 30, vertical: 14),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
                       colors: [Color(0xFF7F00FF), Color(0xFFE100FF)],
                     ),
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(16),
                   ),
                   child: const Row(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.play_arrow, color: Colors.white),
                       SizedBox(width: 8),
@@ -168,6 +151,7 @@ class DetalhesTarefaPage extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
+                          fontSize: 16,
                         ),
                       ),
                     ],
@@ -185,10 +169,13 @@ class DetalhesTarefaPage extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 12),
       child: RichText(
         text: TextSpan(
-          style: TextStyle(color: theme.textTheme.bodyMedium?.color),
+          style: TextStyle(
+            color: theme.textTheme.bodyMedium?.color,
+            fontSize: 15,
+          ),
           children: [
             TextSpan(
               text: "$titulo: ",
@@ -219,7 +206,7 @@ class _Botao extends StatelessWidget {
         elevation: 0,
         padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(14),
         ),
       ),
       child: Text(
