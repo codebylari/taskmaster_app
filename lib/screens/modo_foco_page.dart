@@ -33,7 +33,6 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
       } else {
         timer.cancel();
         rodando = false;
-
         HapticFeedback.mediumImpact();
       }
     });
@@ -69,39 +68,45 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
   }
 
   void concluirTarefa() async {
-  await showDialog(
-    context: context,
-    builder: (dialogContext) => AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Icons.check_circle, color: Colors.green, size: 60),
-          const SizedBox(height: 10),
-          const Text(
-            "Tarefa concluída! 🎉",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 15),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(dialogContext); // fecha popup
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF7F00FF),
-            ),
-            child: const Text("OK"),
-          )
-        ],
-      ),
-    ),
-  );
+    final theme = Theme.of(context);
 
-  Navigator.pop(context);        // sai do modo foco
-  Navigator.pop(context, true);  // sai dos detalhes e vai pra home com resultado
-}
+    await showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: theme.cardColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.check_circle, color: Colors.green, size: 60),
+            const SizedBox(height: 10),
+            Text(
+              "Tarefa concluída! 🎉",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: theme.textTheme.bodyLarge?.color,
+              ),
+            ),
+            const SizedBox(height: 15),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF7F00FF),
+              ),
+              child: const Text("OK"),
+            )
+          ],
+        ),
+      ),
+    );
+
+    Navigator.pop(context);
+    Navigator.pop(context, true);
+  }
 
   @override
   void dispose() {
@@ -113,17 +118,21 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
   @override
   Widget build(BuildContext context) {
     final tarefa = widget.tarefa;
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: theme.scaffoldBackgroundColor,
 
       body: Center(
         child: Container(
           width: 340,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(25),
+
+            // 🔥 borda no dark + sombra leve
+            border: Border.all(color: theme.dividerColor),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
@@ -154,9 +163,12 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
 
               const SizedBox(height: 10),
 
-              const Text(
+              Text(
                 "Modo Foco",
-                style: TextStyle(fontSize: 18, color: Colors.black54),
+                style: TextStyle(
+                  fontSize: 18,
+                  color: theme.textTheme.bodyMedium?.color,
+                ),
               ),
 
               const SizedBox(height: 20),
@@ -171,7 +183,7 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
                     child: CircularProgressIndicator(
                       value: progresso,
                       strokeWidth: 8,
-                      backgroundColor: Colors.grey[200],
+                      backgroundColor: theme.dividerColor,
                       valueColor: const AlwaysStoppedAnimation(
                         Color(0xFF7F00FF),
                       ),
@@ -179,9 +191,10 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
                   ),
                   Text(
                     formatar(tempoRestante),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 35,
                       fontWeight: FontWeight.bold,
+                      color: theme.textTheme.bodyLarge?.color,
                     ),
                   ),
                 ],
@@ -210,20 +223,22 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
 
               const SizedBox(height: 15),
 
-              // ⌨️ INPUT TEMPO
+              // ⌨️ INPUT
               Row(
                 children: [
                   Expanded(
                     child: TextField(
                       controller: controllerTempo,
                       keyboardType: TextInputType.number,
+                      style: TextStyle(color: theme.textTheme.bodyLarge?.color),
                       decoration: InputDecoration(
                         hintText: "Minutos",
+                        hintStyle: TextStyle(color: theme.hintColor),
                         filled: true,
-                        fillColor: Colors.grey[100],
+                        fillColor: theme.cardColor,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide.none,
+                          borderSide: BorderSide(color: theme.dividerColor),
                         ),
                       ),
                     ),
@@ -233,9 +248,6 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
                     onPressed: definirTempoCustom,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF7F00FF),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
                     ),
                     child: const Text("OK"),
                   )
@@ -245,9 +257,12 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
               const SizedBox(height: 15),
 
               // 📋 INFO
-              Text("Nome: ${tarefa['nome'] ?? ''}"),
-              Text("Data: ${tarefa['data'] ?? ''}"),
-              Text("Obs: ${tarefa['observacao'] ?? ''}"),
+              Text("Nome: ${tarefa['nome'] ?? ''}",
+                  style: TextStyle(color: theme.textTheme.bodyMedium?.color)),
+              Text("Data: ${tarefa['data'] ?? ''}",
+                  style: TextStyle(color: theme.textTheme.bodyMedium?.color)),
+              Text("Obs: ${tarefa['observacao'] ?? ''}",
+                  style: TextStyle(color: theme.textTheme.bodyMedium?.color)),
 
               const SizedBox(height: 20),
 

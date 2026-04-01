@@ -2,6 +2,15 @@ import 'package:flutter/material.dart';
 import 'home_page.dart';
 
 class SplashScreen extends StatefulWidget {
+  final bool modoEscuro; // 🔥 NOVO
+  final Function(bool) onTemaChanged; // 🔥 NOVO
+
+  const SplashScreen({
+    super.key,
+    required this.modoEscuro,
+    required this.onTemaChanged,
+  });
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -17,8 +26,8 @@ class _SplashScreenState extends State<SplashScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => HomePage(
-            modoEscuro: false, // 🔥 ADICIONADO
-            onTemaChanged: (value) {}, // 🔥 ADICIONADO
+            modoEscuro: widget.modoEscuro, // 🔥 CORRIGIDO
+            onTemaChanged: widget.onTemaChanged, // 🔥 CORRIGIDO
           ),
         ),
       );

@@ -19,7 +19,6 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
   List<String> horarios =
       List.generate(24, (h) => "${h.toString().padLeft(2, '0')}:00");
 
-  // 🔥 FUNÇÃO NOVA (GOOGLE CALENDAR)
   void adicionarAoGoogleCalendar() {
     if (nomeController.text.trim().isEmpty ||
         dataController.text.trim().isEmpty) {
@@ -67,6 +66,7 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
       "data": dataController.text,
       "observacao": observacaoController.text,
       "dataCriacao": DateTime.now(),
+      "ultimaModificacao": DateTime.now(),
     };
 
     Navigator.pop(context, novaTarefa);
@@ -74,17 +74,22 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFEDEDED),
+      backgroundColor: theme.scaffoldBackgroundColor,
 
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: const BackButton(color: Colors.purple),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: theme.iconTheme.color),
+          onPressed: () => Navigator.pop(context),
+        ),
         centerTitle: true,
-        title: const Text(
+        title: Text(
           "Nova Tarefa",
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: theme.textTheme.titleLarge?.color),
         ),
       ),
 
@@ -97,6 +102,7 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
             TextField(
               controller: nomeController,
               decoration: inputStyle("Nome"),
+              style: TextStyle(color: theme.textTheme.bodyLarge?.color),
             ),
 
             const SizedBox(height: 10),
@@ -107,8 +113,9 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
                 controller: dataController,
                 readOnly: true,
                 decoration: inputStyle("Data").copyWith(
-                  suffixIcon: const Icon(Icons.calendar_today),
+                  suffixIcon: Icon(Icons.calendar_today, color: theme.iconTheme.color),
                 ),
+                style: TextStyle(color: theme.textTheme.bodyLarge?.color),
                 onTap: () async {
                   DateTime? pickedDate = await showDatePicker(
                     context: context,
@@ -137,13 +144,17 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
               controller: observacaoController,
               maxLines: 3,
               decoration: inputStyle("Observação"),
+              style: TextStyle(color: theme.textTheme.bodyLarge?.color),
             ),
 
             const SizedBox(height: 15),
 
-            const Text(
+            Text(
               "Prioridade",
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: theme.textTheme.bodyLarge?.color,
+              ),
             ),
 
             const SizedBox(height: 10),
@@ -164,14 +175,14 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: theme.cardColor,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.notifications_outlined),
+                  Icon(Icons.notifications_outlined, color: theme.iconTheme.color),
                   const SizedBox(width: 10),
-                  const Text("Lembrete"),
+                  Text("Lembrete", style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
                   const Spacer(),
                   Switch(
                     value: lembrete,
@@ -180,7 +191,6 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
                         lembrete = value;
                       });
                     },
-                    activeTrackColor: Colors.green,
                   ),
                 ],
               ),
@@ -196,14 +206,14 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: theme.cardColor,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.access_time),
+                      Icon(Icons.access_time, color: theme.iconTheme.color),
                       const SizedBox(width: 10),
-                      const Text("Horário: "),
+                      Text("Horário: ", style: TextStyle(color: theme.textTheme.bodyLarge?.color)),
                       DropdownButton<String>(
                         value: horario,
                         underline: const SizedBox(),
@@ -227,7 +237,6 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
 
             const Spacer(),
 
-            // 🔥 BOTÃO MODERNO GOOGLE CALENDAR
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -235,35 +244,17 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
                 onPressed: adicionarAoGoogleCalendar,
                 icon: const Icon(Icons.calendar_month),
                 label: const Text("Adicionar ao Google Calendar"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.deepPurple,
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
               ),
             ),
 
             const SizedBox(height: 12),
 
-            // 🔥 BOTÃO SALVAR
             SizedBox(
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
                 onPressed: salvarTarefa,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                child: const Text(
-                  "Salvar",
-                  style: TextStyle(color: Colors.white),
-                ),
+                child: const Text("Salvar"),
               ),
             ),
           ],
@@ -272,19 +263,44 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
     );
   }
 
+  // 🔥 AQUI FOI A CORREÇÃO PRINCIPAL
   InputDecoration inputStyle(String label) {
+    final theme = Theme.of(context);
+
     return InputDecoration(
       labelText: label,
+      labelStyle: TextStyle(color: theme.hintColor),
       filled: true,
-      fillColor: Colors.white,
+      fillColor: theme.cardColor,
+
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
+        borderSide: BorderSide(
+          color: theme.dividerColor,
+          width: 1,
+        ),
+      ),
+
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: theme.dividerColor,
+          width: 1,
+        ),
+      ),
+
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: theme.primaryColor,
+          width: 2,
+        ),
       ),
     );
   }
 
   Widget prioridadeBox(String texto, Color cor) {
+    final theme = Theme.of(context);
     bool selecionado = prioridade == texto;
 
     return GestureDetector(
@@ -296,10 +312,10 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          color: selecionado ? cor.withOpacity(0.15) : Colors.white,
+          color: selecionado ? cor.withOpacity(0.15) : theme.cardColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: selecionado ? cor : Colors.grey.shade300,
+            color: selecionado ? cor : theme.dividerColor,
             width: 2,
           ),
         ),
@@ -307,7 +323,10 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
           children: [
             Container(width: 10, height: 10, color: cor),
             const SizedBox(width: 6),
-            Text(texto),
+            Text(
+              texto,
+              style: TextStyle(color: theme.textTheme.bodyMedium?.color),
+            ),
           ],
         ),
       ),

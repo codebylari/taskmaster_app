@@ -9,8 +9,11 @@ class DetalhesTarefaPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      // 🔥 AGORA GLOBAL
+      backgroundColor: theme.scaffoldBackgroundColor,
 
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -23,15 +26,16 @@ class DetalhesTarefaPage extends StatelessWidget {
             Row(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.arrow_back),
+                  icon: Icon(Icons.arrow_back, color: theme.iconTheme.color),
                   onPressed: () => Navigator.pop(context),
                 ),
                 const SizedBox(width: 10),
-                const Text(
+                Text(
                   "Detalhes da Tarefa",
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
+                    color: theme.textTheme.titleLarge?.color,
                   ),
                 ),
               ],
@@ -44,22 +48,28 @@ class DetalhesTarefaPage extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.9),
+                color: theme.cardColor, // 🔥 corrigido
                 borderRadius: BorderRadius.circular(20),
+
+                // 🔥 sombra leve no light / borda no dark
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.05),
                     blurRadius: 10,
                   ),
                 ],
+
+                border: Border.all(
+                  color: theme.dividerColor,
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _info("Nome", tarefa["nome"] ?? ""),
-                  _info("Data", tarefa["data"] ?? ""),
-                  _info("Observação", tarefa["observacao"] ?? ""),
-                  _info("Prioridade", tarefa["prioridade"] ?? ""),
+                  _info(context, "Nome", tarefa["nome"] ?? ""),
+                  _info(context, "Data", tarefa["data"] ?? ""),
+                  _info(context, "Observação", tarefa["observacao"] ?? ""),
+                  _info(context, "Prioridade", tarefa["prioridade"] ?? ""),
 
                   const SizedBox(height: 20),
 
@@ -81,19 +91,31 @@ class DetalhesTarefaPage extends StatelessWidget {
                         }
                       }),
 
-                      // 🗑️ EXCLUIR (CORRIGIDO)
+                      // 🗑️ EXCLUIR
                       _Botao("Excluir", Colors.red, () async {
                         final confirmar = await showDialog(
                           context: context,
                           builder: (_) => AlertDialog(
-                            title: const Text("Excluir tarefa"),
-                            content: const Text(
-                                "Tem certeza que deseja excluir?"),
+                            backgroundColor: theme.cardColor, // 🔥 dark
+                            title: Text(
+                              "Excluir tarefa",
+                              style: TextStyle(
+                                  color: theme.textTheme.titleLarge?.color),
+                            ),
+                            content: Text(
+                              "Tem certeza que deseja excluir?",
+                              style: TextStyle(
+                                  color: theme.textTheme.bodyMedium?.color),
+                            ),
                             actions: [
                               TextButton(
                                 onPressed: () =>
                                     Navigator.pop(context, false),
-                                child: const Text("Cancelar"),
+                                child: Text(
+                                  "Cancelar",
+                                  style: TextStyle(
+                                      color: theme.textTheme.bodyMedium?.color),
+                                ),
                               ),
                               TextButton(
                                 onPressed: () =>
@@ -159,12 +181,14 @@ class DetalhesTarefaPage extends StatelessWidget {
     );
   }
 
-  Widget _info(String titulo, String valor) {
+  Widget _info(BuildContext context, String titulo, String valor) {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: RichText(
         text: TextSpan(
-          style: const TextStyle(color: Colors.black87),
+          style: TextStyle(color: theme.textTheme.bodyMedium?.color),
           children: [
             TextSpan(
               text: "$titulo: ",

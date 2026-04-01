@@ -99,10 +99,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final lista = tarefasOrdenadas;
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor:
-          widget.modoEscuro ? Colors.black : const Color(0xFFF7F8FA),
+      backgroundColor: theme.scaffoldBackgroundColor,
 
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: widget.modoEscuro ? Colors.white : Colors.black,
+            color: theme.textTheme.titleLarge?.color,
           ),
         ),
 
@@ -121,13 +121,16 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: Icon(
               Icons.settings,
-              color: widget.modoEscuro ? Colors.white : Colors.black,
+              color: theme.iconTheme.color,
             ),
             onPressed: () async {
               final resultado = await Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => const ConfiguracoesPage(),
+                  builder: (_) => ConfiguracoesPage(
+                    modoEscuroAtual: widget.modoEscuro,
+                    onTemaChanged: widget.onTemaChanged,
+                  ),
                 ),
               );
 
@@ -149,9 +152,7 @@ class _HomePageState extends State<HomePage> {
                 Text(
                   "Ordenar por: ",
                   style: TextStyle(
-                    color: widget.modoEscuro
-                        ? Colors.white
-                        : Colors.black,
+                    color: theme.textTheme.bodyLarge?.color,
                   ),
                 ),
                 DropdownButton<String>(
@@ -211,6 +212,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _cardTarefa(BuildContext context, Map<String, dynamic> tarefa) {
+    final theme = Theme.of(context);
     final cor = _corPrioridade(tarefa["prioridade"]);
     final concluida = tarefa["concluida"];
 
@@ -243,6 +245,9 @@ class _HomePageState extends State<HomePage> {
         decoration: BoxDecoration(
           color: _corFundo(cor),
           borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: theme.dividerColor,
+          ),
         ),
         child: Row(
           children: [
@@ -269,9 +274,7 @@ class _HomePageState extends State<HomePage> {
                     tarefa["nome"],
                     style: TextStyle(
                       fontSize: 16,
-                      color: widget.modoEscuro
-                          ? Colors.white
-                          : Colors.black,
+                      color: theme.textTheme.bodyLarge?.color,
                       decoration: concluida
                           ? TextDecoration.lineThrough
                           : TextDecoration.none,
@@ -284,20 +287,17 @@ class _HomePageState extends State<HomePage> {
                     "Data: ${tarefa["data"]}",
                     style: TextStyle(
                       fontSize: 12,
-                      color: widget.modoEscuro
-                          ? Colors.grey[400]
-                          : Colors.grey[700],
+                      color: theme.textTheme.bodySmall?.color,
                     ),
                   ),
 
-                  // 🔥 CORREÇÃO AQUI
                   Text(
                     "Editado: ${_formatarData(
                       tarefa["ultimaModificacao"] ?? DateTime.now()
                     )}",
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
-                      color: Colors.grey,
+                      color: theme.hintColor,
                     ),
                   ),
                 ],
