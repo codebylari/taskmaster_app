@@ -14,6 +14,9 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
   late TextEditingController dataController;
   late TextEditingController obsController;
 
+  // ✅ NOVO: prioridade
+  String prioridadeSelecionada = "baixa";
+
   @override
   void initState() {
     super.initState();
@@ -24,6 +27,9 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
         TextEditingController(text: widget.tarefa["data"] ?? "");
     obsController =
         TextEditingController(text: widget.tarefa["observacao"] ?? "");
+
+    // ✅ NOVO: pega prioridade existente
+    prioridadeSelecionada = widget.tarefa["prioridade"] ?? "baixa";
   }
 
   void salvar() {
@@ -33,7 +39,24 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
       "nome": nomeController.text,
       "data": dataController.text,
       "observacao": obsController.text,
+
+      // ✅ NOVO: retorna prioridade
+      "prioridade": prioridadeSelecionada,
     });
+  }
+
+  // ✅ NOVO: cor da prioridade
+  Color corPrioridade(String p) {
+    switch (p) {
+      case "alta":
+        return Colors.red;
+      case "media":
+        return Colors.yellow;
+      case "baixa":
+        return Colors.green;
+      default:
+        return Colors.grey;
+    }
   }
 
   @override
@@ -84,6 +107,28 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
               const SizedBox(height: 15),
               campo("Observação", obsController),
 
+              const SizedBox(height: 20),
+
+              // ✅ NOVO: ESCOLHER PRIORIDADE
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  "Prioridade",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  botaoPrioridade("alta", "Alta 🔴"),
+                  botaoPrioridade("media", "Média 🟡"),
+                  botaoPrioridade("baixa", "Baixa 🟢"),
+                ],
+              ),
+
               const SizedBox(height: 25),
 
               SizedBox(
@@ -121,6 +166,29 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide.none,
         ),
+      ),
+    );
+  }
+
+  // ✅ NOVO: botão de prioridade
+  Widget botaoPrioridade(String valor, String texto) {
+    final selecionado = prioridadeSelecionada == valor;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          prioridadeSelecionada = valor;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        decoration: BoxDecoration(
+          color: selecionado
+              ? corPrioridade(valor).withOpacity(0.3)
+              : Colors.grey[200],
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(texto),
       ),
     );
   }
