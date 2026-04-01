@@ -100,6 +100,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final lista = tarefasOrdenadas;
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -132,8 +133,6 @@ class _HomePageState extends State<HomePage> {
               );
 
               if (resultado != null) {
-
-                // 🔥 evita bug se vier null
                 final bool novoTema = resultado["modoEscuro"] ?? widget.modoEscuro;
                 final bool limpar = resultado["limpar"] ?? false;
 
@@ -144,7 +143,6 @@ class _HomePageState extends State<HomePage> {
                     tarefas.removeWhere((t) => t["concluida"] == true);
                   });
 
-                  // 🔥 feedback visual (opcional, mas bonito)
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text("Tarefas concluídas removidas 🧹"),
@@ -189,7 +187,7 @@ class _HomePageState extends State<HomePage> {
 
             const SizedBox(height: 15),
 
-            ...lista.map((tarefa) => _cardTarefa(context, tarefa)),
+            ...lista.map((tarefa) => _cardTarefa(context, tarefa, isDark)),
 
             const SizedBox(height: 10),
 
@@ -227,7 +225,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _cardTarefa(BuildContext context, Map<String, dynamic> tarefa) {
+  Widget _cardTarefa(BuildContext context, Map<String, dynamic> tarefa, bool isDark) {
     final theme = Theme.of(context);
     final cor = _corPrioridade(tarefa["prioridade"]);
     final concluida = tarefa["concluida"];
@@ -255,20 +253,31 @@ class _HomePageState extends State<HomePage> {
           });
         }
       },
+
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: _corFundo(cor),
+          color: isDark
+              ? const Color(0xFF1E1E1E) // 🔥 neutro no dark
+              : _corFundo(cor),         // 🎯 colorido só no light
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            )
-          ],
+
+          border: isDark
+              ? Border.all(color: Colors.white.withOpacity(0.06))
+              : null,
+
+          boxShadow: isDark
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  )
+                ],
         ),
+
         child: Row(
           children: [
             GestureDetector(
@@ -284,6 +293,7 @@ class _HomePageState extends State<HomePage> {
                 color: cor,
               ),
             ),
+
             const SizedBox(width: 12),
 
             Expanded(
