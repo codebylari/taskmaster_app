@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
       case "alta":
         return Colors.red;
       case "media":
-        return Colors.yellow;
+        return Colors.orange;
       case "baixa":
         return Colors.green;
       default:
@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
     return lista;
   }
 
-  Color _corFundo(Color cor) => cor.withOpacity(0.15);
+  Color _corFundo(Color cor) => cor.withOpacity(0.12);
 
   String _formatarData(DateTime data) {
     return "${data.day.toString().padLeft(2, '0')}/"
@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
         title: Text(
           "Minhas Tarefas",
           style: TextStyle(
-            fontSize: 24,
+            fontSize: 26,
             fontWeight: FontWeight.bold,
             color: theme.textTheme.titleLarge?.color,
           ),
@@ -119,10 +119,7 @@ class _HomePageState extends State<HomePage> {
 
         actions: [
           IconButton(
-            icon: Icon(
-              Icons.settings,
-              color: theme.iconTheme.color,
-            ),
+            icon: Icon(Icons.settings, color: theme.iconTheme.color),
             onPressed: () async {
               final resultado = await Navigator.push(
                 context,
@@ -135,7 +132,26 @@ class _HomePageState extends State<HomePage> {
               );
 
               if (resultado != null) {
-                widget.onTemaChanged(resultado["modoEscuro"]);
+
+                // 🔥 evita bug se vier null
+                final bool novoTema = resultado["modoEscuro"] ?? widget.modoEscuro;
+                final bool limpar = resultado["limpar"] ?? false;
+
+                widget.onTemaChanged(novoTema);
+
+                if (limpar) {
+                  setState(() {
+                    tarefas.removeWhere((t) => t["concluida"] == true);
+                  });
+
+                  // 🔥 feedback visual (opcional, mas bonito)
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Tarefas concluídas removidas 🧹"),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                }
               }
             },
           ),
@@ -150,20 +166,19 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  "Ordenar por: ",
-                  style: TextStyle(
-                    color: theme.textTheme.bodyLarge?.color,
-                  ),
+                  "Ordenar por:",
+                  style: TextStyle(color: theme.textTheme.bodyLarge?.color),
                 ),
+                const SizedBox(width: 8),
                 DropdownButton<String>(
                   value: filtro,
                   underline: const SizedBox(),
                   items: const [
                     DropdownMenuItem(value: "alta", child: Text("Alta 🔴")),
-                    DropdownMenuItem(value: "media", child: Text("Média 🟡")),
+                    DropdownMenuItem(value: "media", child: Text("Média 🟠")),
                     DropdownMenuItem(value: "baixa", child: Text("Baixa 🟢")),
-                    DropdownMenuItem(value: "recente", child: Text("Mais recente")),
-                    DropdownMenuItem(value: "antigo", child: Text("Mais antigo")),
+                    DropdownMenuItem(value: "recente", child: Text("Recente")),
+                    DropdownMenuItem(value: "antigo", child: Text("Antigo")),
                   ],
                   onChanged: (value) {
                     setState(() => filtro = value!);
@@ -180,12 +195,13 @@ class _HomePageState extends State<HomePage> {
 
             SizedBox(
               width: double.infinity,
-              height: 50,
+              height: 52,
               child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepPurple,
+                  elevation: 0,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                 ),
                 onPressed: () async {
@@ -245,9 +261,13 @@ class _HomePageState extends State<HomePage> {
         decoration: BoxDecoration(
           color: _corFundo(cor),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: theme.dividerColor,
-          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ],
         ),
         child: Row(
           children: [

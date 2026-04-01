@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ConfiguracoesPage extends StatefulWidget {
-  final bool modoEscuroAtual; // 🔥 recebe do app
-
-  // 🔥 ADICIONEI (não remove nada)
+  final bool modoEscuroAtual;
   final Function(bool) onTemaChanged;
 
   const ConfiguracoesPage({
     super.key,
     required this.modoEscuroAtual,
-
-    // 🔥 ADICIONEI (obrigatório agora)
     required this.onTemaChanged,
   });
 
@@ -25,12 +22,33 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
   @override
   void initState() {
     super.initState();
-
-    // 🔥 AGORA ELE PEGA O VALOR REAL
     modoEscuro = widget.modoEscuroAtual;
+
+    _carregarPreferencias(); // 🔥 NOVO
   }
 
-  void salvar() {
+  // 🔥 CARREGA DO CELULAR
+  Future<void> _carregarPreferencias() async {
+    final prefs = await SharedPreferences.getInstance();
+    final salvo = prefs.getBool("modoEscuro");
+
+    if (salvo != null) {
+      setState(() {
+        modoEscuro = salvo;
+      });
+    }
+  }
+
+  Future<void> salvarPreferencias() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool("modoEscuro", modoEscuro);
+  }
+
+  void salvar() async {
+    await salvarPreferencias();
+
+    widget.onTemaChanged(modoEscuro);
+
     Navigator.pop(context, {
       "modoEscuro": modoEscuro,
       "limpar": limparConcluidas,
@@ -49,67 +67,49 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        iconTheme: IconThemeData(color: theme.iconTheme.color),
-        titleTextStyle: TextStyle(
-          color: theme.textTheme.titleLarge?.color,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-        ),
       ),
 
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
 
-          // 🌙 MODO ESCURO
           _itemConfiguracao(
             context,
             titulo: "Modo escuro",
             icone: Icons.dark_mode,
             valor: modoEscuro,
-            onChanged: (value) {
-              setState(() {
-                modoEscuro = value;
-              });
-
-              // 🔥 ADICIONEI (atualiza na hora)
-              widget.onTemaChanged(value);
+            onChanged: (value) async {
+              setState(() => modoEscuro = value);
+              await salvarPreferencias(); // 🔥 salva na hora
             },
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
 
-          // 🧹 LIMPAR
           _itemConfiguracao(
             context,
             titulo: "Limpar tarefas concluídas",
             icone: Icons.cleaning_services,
             valor: limparConcluidas,
             onChanged: (value) {
-              setState(() {
-                limparConcluidas = value;
-              });
+              setState(() => limparConcluidas = value);
             },
           ),
 
           const SizedBox(height: 30),
 
-          // 🔥 BOTÃO
           SizedBox(
-            width: double.infinity,
-            height: 50,
+            height: 52,
             child: ElevatedButton(
               onPressed: salvar,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepPurple,
+                elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
               ),
-              child: const Text(
-                "Salvar",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+              child: const Text("Salvar"),
             ),
           ),
         ],
@@ -126,24 +126,34 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
   }) {
     final theme = Theme.of(context);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color: theme.cardColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: theme.dividerColor),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: theme.dividerColor.withOpacity(0.2),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          )
+        ],
       ),
       child: Row(
         children: [
-          Icon(icone, color: theme.iconTheme.color),
-          const SizedBox(width: 12),
+          Icon(icone, size: 20, color: theme.iconTheme.color),
+          const SizedBox(width: 10),
 
           Expanded(
             child: Text(
               titulo,
               style: TextStyle(
+                fontSize: 14,
                 color: theme.textTheme.bodyLarge?.color,
-                fontSize: 15,
               ),
             ),
           ),

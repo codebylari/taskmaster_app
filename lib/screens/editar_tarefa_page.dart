@@ -14,7 +14,6 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
   late TextEditingController dataController;
   late TextEditingController obsController;
 
-  // ✅ ADICIONADO (prioridade)
   String prioridadeSelecionada = "baixa";
 
   @override
@@ -28,7 +27,6 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
     obsController =
         TextEditingController(text: widget.tarefa["observacao"] ?? "");
 
-    // ✅ ADICIONADO
     prioridadeSelecionada = widget.tarefa["prioridade"] ?? "baixa";
   }
 
@@ -39,13 +37,10 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
       "nome": nomeController.text,
       "data": dataController.text,
       "observacao": obsController.text,
-
-      // ✅ ADICIONADO
       "prioridade": prioridadeSelecionada,
     });
   }
 
-  // ✅ ADICIONADO
   Color corPrioridade(String p) {
     switch (p) {
       case "alta":
@@ -61,20 +56,26 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    // ✅ DETECTA SE ESTÁ EM DARK MODE
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor:
+          isDark ? const Color(0xFF121212) : const Color(0xFFF5F5F5),
 
       body: Center(
         child: Container(
           width: 380,
           padding: const EdgeInsets.all(25),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color:
+                isDark ? const Color(0xFF1E1E1E) : Colors.white,
             borderRadius: BorderRadius.circular(25),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 15,
+                color: Colors.black.withOpacity(isDark ? 0.6 : 0.05),
+                blurRadius: 20,
               )
             ],
           ),
@@ -86,14 +87,18 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
                 children: [
                   IconButton(
                     onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.arrow_back),
+                    icon: Icon(
+                      Icons.arrow_back,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
                   ),
                   const SizedBox(width: 10),
-                  const Text(
+                  Text(
                     "Editar Tarefa",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : Colors.black,
                     ),
                   ),
                 ],
@@ -101,20 +106,22 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
 
               const SizedBox(height: 20),
 
-              campo("Nome", nomeController),
+              campo("Nome", nomeController, isDark),
               const SizedBox(height: 15),
-              campo("Data", dataController),
+              campo("Data", dataController, isDark),
               const SizedBox(height: 15),
-              campo("Observação", obsController),
+              campo("Observação", obsController, isDark),
 
-              // ✅ ADICIONADO (PRIORIDADE)
               const SizedBox(height: 20),
 
-              const Align(
+              Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   "Prioridade",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
                 ),
               ),
 
@@ -123,9 +130,9 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  botaoPrioridade("alta", "Alta 🔴"),
-                  botaoPrioridade("media", "Média 🟡"),
-                  botaoPrioridade("baixa", "Baixa 🟢"),
+                  botaoPrioridade("alta", "Alta 🔴", isDark),
+                  botaoPrioridade("media", "Média 🟡", isDark),
+                  botaoPrioridade("baixa", "Baixa 🟢", isDark),
                 ],
               ),
 
@@ -144,7 +151,10 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
                   ),
                   child: const Text(
                     "Salvar",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -155,13 +165,20 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
     );
   }
 
-  Widget campo(String label, TextEditingController controller) {
+  Widget campo(String label, TextEditingController controller, bool isDark) {
     return TextField(
       controller: controller,
+      style: TextStyle(
+        color: isDark ? Colors.white : Colors.black,
+      ),
       decoration: InputDecoration(
         labelText: label,
+        labelStyle: TextStyle(
+          color: isDark ? Colors.white70 : Colors.black54,
+        ),
         filled: true,
-        fillColor: Colors.grey[100],
+        fillColor:
+            isDark ? const Color(0xFF2A2A2A) : Colors.grey[100],
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide.none,
@@ -170,8 +187,7 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
     );
   }
 
-  // ✅ ADICIONADO
-  Widget botaoPrioridade(String valor, String texto) {
+  Widget botaoPrioridade(String valor, String texto, bool isDark) {
     final selecionado = prioridadeSelecionada == valor;
 
     return GestureDetector(
@@ -184,11 +200,18 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         decoration: BoxDecoration(
           color: selecionado
-              ? corPrioridade(valor).withOpacity(0.3)
-              : Colors.grey[200],
+              ? corPrioridade(valor).withOpacity(0.4)
+              : (isDark
+                  ? const Color(0xFF2A2A2A)
+                  : Colors.grey[200]),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Text(texto),
+        child: Text(
+          texto,
+          style: TextStyle(
+            color: isDark ? Colors.white : Colors.black,
+          ),
+        ),
       ),
     );
   }
