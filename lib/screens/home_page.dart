@@ -197,6 +197,7 @@ class _HomePageState extends State<HomePage> {
             tarefa["nome"] = resultado["nome"];
             tarefa["data"] = resultado["data"];
             tarefa["observacao"] = resultado["observacao"];
+            tarefa["prioridade"] = resultado["prioridade"];
           });
         }
       },

@@ -14,7 +14,7 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
   late TextEditingController dataController;
   late TextEditingController obsController;
 
-  // ✅ NOVO: prioridade
+  // ✅ ADICIONADO (prioridade)
   String prioridadeSelecionada = "baixa";
 
   @override
@@ -28,7 +28,7 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
     obsController =
         TextEditingController(text: widget.tarefa["observacao"] ?? "");
 
-    // ✅ NOVO: pega prioridade existente
+    // ✅ ADICIONADO
     prioridadeSelecionada = widget.tarefa["prioridade"] ?? "baixa";
   }
 
@@ -40,12 +40,12 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
       "data": dataController.text,
       "observacao": obsController.text,
 
-      // ✅ NOVO: retorna prioridade
+      // ✅ ADICIONADO
       "prioridade": prioridadeSelecionada,
     });
   }
 
-  // ✅ NOVO: cor da prioridade
+  // ✅ ADICIONADO
   Color corPrioridade(String p) {
     switch (p) {
       case "alta":
@@ -107,9 +107,9 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
               const SizedBox(height: 15),
               campo("Observação", obsController),
 
+              // ✅ ADICIONADO (PRIORIDADE)
               const SizedBox(height: 20),
 
-              // ✅ NOVO: ESCOLHER PRIORIDADE
               const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -170,7 +170,7 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
     );
   }
 
-  // ✅ NOVO: botão de prioridade
+  // ✅ ADICIONADO
   Widget botaoPrioridade(String valor, String texto) {
     final selecionado = prioridadeSelecionada == valor;
 
