@@ -24,10 +24,9 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
     super.initState();
     modoEscuro = widget.modoEscuroAtual;
 
-    _carregarPreferencias(); // 🔥 NOVO
+    _carregarPreferencias();
   }
 
-  // 🔥 CARREGA DO CELULAR
   Future<void> _carregarPreferencias() async {
     final prefs = await SharedPreferences.getInstance();
     final salvo = prefs.getBool("modoEscuro");
@@ -58,61 +57,93 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
 
       appBar: AppBar(
-        title: const Text("Configurações"),
-        centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-      ),
-
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-
-          _itemConfiguracao(
-            context,
-            titulo: "Modo escuro",
-            icone: Icons.dark_mode,
-            valor: modoEscuro,
-            onChanged: (value) async {
-              setState(() => modoEscuro = value);
-              await salvarPreferencias(); // 🔥 salva na hora
-            },
-          ),
-
-          const SizedBox(height: 12),
-
-          _itemConfiguracao(
-            context,
-            titulo: "Limpar tarefas concluídas",
-            icone: Icons.cleaning_services,
-            valor: limparConcluidas,
-            onChanged: (value) {
-              setState(() => limparConcluidas = value);
-            },
-          ),
-
-          const SizedBox(height: 30),
-
-          SizedBox(
-            height: 52,
-            child: ElevatedButton(
-              onPressed: salvar,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-              ),
-              child: const Text("Salvar"),
+        toolbarHeight: 100,
+        centerTitle: true,
+        title: Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: Text(
+            "Configurações",
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+              color: theme.textTheme.titleLarge?.color,
             ),
           ),
-        ],
+        ),
+      ),
+
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          double largura = constraints.maxWidth;
+
+          double margemHorizontal;
+
+          if (largura > 900) {
+            margemHorizontal = largura * 0.2;
+          } else if (largura > 600) {
+            margemHorizontal = largura * 0.1;
+          } else {
+            margemHorizontal = 16;
+          }
+
+          return ListView(
+            padding: EdgeInsets.symmetric(
+              horizontal: margemHorizontal,
+              vertical: 20,
+            ),
+            children: [
+
+              _itemConfiguracao(
+                context,
+                titulo: "Modo escuro",
+                icone: Icons.dark_mode,
+                valor: modoEscuro,
+                onChanged: (value) async {
+                  setState(() => modoEscuro = value);
+                  await salvarPreferencias();
+                },
+              ),
+
+              const SizedBox(height: 12),
+
+              _itemConfiguracao(
+                context,
+                titulo: "Limpar tarefas concluídas",
+                icone: Icons.cleaning_services,
+                valor: limparConcluidas,
+                onChanged: (value) {
+                  setState(() => limparConcluidas = value);
+                },
+              ),
+
+              const SizedBox(height: 30),
+
+              SizedBox(
+                height: 52,
+                child: ElevatedButton(
+                  onPressed: salvar,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF7F00FF),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: const Text("Salvar"),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -125,34 +156,40 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
     required Function(bool) onChanged,
   }) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: theme.cardColor,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: theme.dividerColor.withOpacity(0.2),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          )
-        ],
+        borderRadius: BorderRadius.circular(16),
+
+        // 🔥 IGUAL OUTRAS TELAS
+        border: isDark
+            ? Border.all(color: Colors.white.withOpacity(0.06))
+            : null,
+
+        boxShadow: isDark
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                )
+              ],
       ),
       child: Row(
         children: [
           Icon(icone, size: 20, color: theme.iconTheme.color),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
 
           Expanded(
             child: Text(
               titulo,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 15,
                 color: theme.textTheme.bodyLarge?.color,
               ),
             ),

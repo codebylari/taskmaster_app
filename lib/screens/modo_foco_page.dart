@@ -125,121 +125,170 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
       backgroundColor: theme.scaffoldBackgroundColor,
 
       appBar: AppBar(
-        title: const Text("Modo Foco"),
-        centerTitle: true,
-        elevation: 0,
         backgroundColor: Colors.transparent,
-      ),
-
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-
-          // 🔥 AQUI É O SEGREDO
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 500),
-
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: theme.cardColor,
-                borderRadius: BorderRadius.circular(20),
-
-                border: isDark
-                    ? Border.all(color: Colors.white.withOpacity(0.08))
-                    : null,
-
-                boxShadow: isDark
-                    ? []
-                    : [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-              ),
-
-              child: Column(
-                children: [
-                  Text(
-                    formatar(tempoRestante),
-                    style: TextStyle(
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold,
-                      color: theme.textTheme.bodyLarge?.color,
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  CircularProgressIndicator(
-                    value: progresso,
-                    strokeWidth: 8,
-                    backgroundColor: theme.dividerColor,
-                    valueColor: const AlwaysStoppedAnimation(
-                      Color(0xFF7F00FF),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      IconButton(onPressed: iniciar, icon: const Icon(Icons.play_arrow)),
-                      IconButton(onPressed: pausar, icon: const Icon(Icons.pause)),
-                      IconButton(onPressed: resetar, icon: const Icon(Icons.restart_alt)),
-                    ],
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: controllerTempo,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            hintText: "Minutos",
-                            filled: true,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      ElevatedButton(
-                        onPressed: definirTempoCustom,
-                        child: const Text("OK"),
-                      )
-                    ],
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  Text("Nome: ${tarefa['nome'] ?? ''}"),
-                  Text("Data: ${tarefa['data'] ?? ''}"),
-                  Text("Obs: ${tarefa['observacao'] ?? ''}"),
-
-                  const SizedBox(height: 25),
-
-                  Row(
-                    children: [
-                      Expanded(child: botao("Concluir", Colors.green, concluirTarefa)),
-                      const SizedBox(width: 10),
-                      Expanded(child: botao("Sair", Colors.red, () {
-                        Navigator.pop(context);
-                      })),
-                    ],
-                  ),
-                ],
-              ),
+        elevation: 0,
+        toolbarHeight: 100,
+        centerTitle: true,
+        title: Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: Text(
+            "Modo Foco",
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+              color: theme.textTheme.titleLarge?.color,
             ),
           ),
         ),
+      ),
+
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          double largura = constraints.maxWidth;
+
+          double margemHorizontal;
+
+          if (largura > 900) {
+            margemHorizontal = largura * 0.2;
+          } else if (largura > 600) {
+            margemHorizontal = largura * 0.1;
+          } else {
+            margemHorizontal = 16;
+          }
+
+          return Center(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(
+                horizontal: margemHorizontal,
+                vertical: 20,
+              ),
+
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: theme.cardColor,
+                  borderRadius: BorderRadius.circular(20),
+                  border: isDark
+                      ? Border.all(color: Colors.white.withOpacity(0.08))
+                      : null,
+                  boxShadow: isDark
+                      ? []
+                      : [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                ),
+
+                child: Column(
+                  children: [
+                    Text(
+                      formatar(tempoRestante),
+                      style: TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        color: theme.textTheme.bodyLarge?.color,
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    CircularProgressIndicator(
+                      value: progresso,
+                      strokeWidth: 8,
+                      backgroundColor: theme.dividerColor,
+                      valueColor: const AlwaysStoppedAnimation(
+                        Color(0xFF7F00FF),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(onPressed: iniciar, icon: const Icon(Icons.play_arrow)),
+                        IconButton(onPressed: pausar, icon: const Icon(Icons.pause)),
+                        IconButton(onPressed: resetar, icon: const Icon(Icons.restart_alt)),
+                      ],
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // 🔥 AQUI FOI AJUSTADO
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 100,
+                          child: TextField(
+                            controller: controllerTempo,
+                            keyboardType: TextInputType.number,
+                            textAlign: TextAlign.center,
+                            decoration: InputDecoration(
+                              hintText: "20",
+                              filled: true,
+                              fillColor: isDark
+                                  ? const Color(0xFF1E1E1E)
+                                  : Colors.white,
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 14),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(14),
+                                borderSide: BorderSide(
+                                  color: Colors.grey.shade300,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(14),
+                                borderSide: BorderSide(
+                                  color: Colors.grey.shade400,
+                                  width: 1.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        SizedBox(
+                          height: 45,
+                          child: ElevatedButton(
+                            onPressed: definirTempoCustom,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF7F00FF),
+                            ),
+                            child: const Text("OK"),
+                          ),
+                        )
+                      ],
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    Text("Nome: ${tarefa['nome'] ?? ''}"),
+                    Text("Data: ${tarefa['data'] ?? ''}"),
+                    Text("Obs: ${tarefa['observacao'] ?? ''}"),
+
+                    const SizedBox(height: 25),
+
+                    Row(
+                      children: [
+                        Expanded(child: botao("Concluir", Colors.green, concluirTarefa)),
+                        const SizedBox(width: 10),
+                        Expanded(child: botao("Sair", Colors.red, () {
+                          Navigator.pop(context);
+                        })),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

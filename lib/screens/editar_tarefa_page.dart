@@ -57,77 +57,115 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final theme = Theme.of(context);
 
     return Scaffold(
       backgroundColor:
           isDark ? const Color(0xFF121212) : const Color(0xFFF7F8FA),
 
-      // ✅ APPBAR PADRÃO (igual outras telas)
       appBar: AppBar(
-        title: const Text("Editar Tarefa"),
-        centerTitle: true,
-        elevation: 0,
         backgroundColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: 100,
+
+        title: Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: Text(
+            "Editar Tarefa",
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+              color: theme.textTheme.titleLarge?.color,
+            ),
+          ),
+        ),
+
+        centerTitle: true,
         foregroundColor: isDark ? Colors.white : Colors.black,
       ),
 
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            campo("Nome", nomeController, isDark),
-            const SizedBox(height: 15),
-            campo("Data", dataController, isDark),
-            const SizedBox(height: 15),
-            campo("Observação", obsController, isDark),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          double largura = constraints.maxWidth;
 
-            const SizedBox(height: 25),
+          double margemHorizontal;
 
-            Text(
-              "Prioridade",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: isDark ? Colors.white : Colors.black,
-              ),
+          if (largura > 900) {
+            margemHorizontal = largura * 0.2;
+          } else if (largura > 600) {
+            margemHorizontal = largura * 0.1;
+          } else {
+            margemHorizontal = 16;
+          }
+
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: margemHorizontal,
+              vertical: 20,
             ),
-
-            const SizedBox(height: 10),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                botaoPrioridade("alta", "Alta 🔴", isDark),
-                botaoPrioridade("media", "Média 🟡", isDark),
-                botaoPrioridade("baixa", "Baixa 🟢", isDark),
-              ],
-            ),
+                const SizedBox(height: 10),
 
-            const SizedBox(height: 40),
+                campo("Nome", nomeController, isDark),
+                const SizedBox(height: 15),
+                campo("Data", dataController, isDark),
+                const SizedBox(height: 15),
+                campo("Observação", obsController, isDark),
 
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: salvar,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF7F00FF),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-                child: const Text(
-                  "Salvar",
+                const SizedBox(height: 25),
+
+                Text(
+                  "Prioridade",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    fontSize: 16,
+                    color: isDark ? Colors.white : Colors.black,
                   ),
                 ),
-              ),
+
+                const SizedBox(height: 10),
+
+                // 🔥 AQUI FOI AJUSTADO
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    botaoPrioridade("alta", "Alta 🔴", isDark),
+                    const SizedBox(width: 12),
+                    botaoPrioridade("media", "Média 🟡", isDark),
+                    const SizedBox(width: 12),
+                    botaoPrioridade("baixa", "Baixa 🟢", isDark),
+                  ],
+                ),
+
+                const SizedBox(height: 40),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: salvar,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF7F00FF),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: const Text(
+                      "Salvar",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

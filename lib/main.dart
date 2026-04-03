@@ -27,16 +27,16 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
 
-      // 👇 seu tema original (mantido)
+      //tema 
       theme: AppTheme.theme,
 
-      // 🔥 NOVO: tema escuro global
+      //tema escuro global
       darkTheme: ThemeData.dark(),
 
-      // 🔥 NOVO: controle do tema
+      //controle do tema
       themeMode: modoEscuro ? ThemeMode.dark : ThemeMode.light,
 
-      // 🔥 ALTERAÇÃO AQUI (PASSANDO PRA SPLASH)
+    
       home: SplashScreen(
         modoEscuro: modoEscuro,
         onTemaChanged: atualizarTema,

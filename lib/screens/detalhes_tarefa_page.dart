@@ -16,157 +16,192 @@ class DetalhesTarefaPage extends StatelessWidget {
       backgroundColor: theme.scaffoldBackgroundColor,
 
       appBar: AppBar(
-        title: const Text("Detalhes da Tarefa"),
-        centerTitle: true,
-        elevation: 0,
         backgroundColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: 100, // 🔥 mais alto
+
+        title: Padding(
+          padding: const EdgeInsets.only(top: 20), // 🔥 desce o título
+          child: Text(
+            "Detalhes da Tarefa",
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+              color: theme.textTheme.titleLarge?.color,
+            ),
+          ),
+        ),
+
+        centerTitle: true,
         foregroundColor: isDark ? Colors.white : Colors.black,
       ),
 
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      // 🔥 MESMA RESPONSIVIDADE DA HOME
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          double largura = constraints.maxWidth;
 
-            // 💎 CARD MODERNO COM BORDA SUAVE NO DARK
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: theme.cardColor,
-                borderRadius: BorderRadius.circular(20),
+          double margemHorizontal;
 
-                // 🌙 DARK = BORDA SUAVE | ☀️ LIGHT = SOMBRA
-                border: isDark
-                    ? Border.all(
-                        color: Colors.white.withOpacity(0.08), // 👈 SUAVE
-                      )
-                    : null,
+          if (largura > 900) {
+            margemHorizontal = largura * 0.2;
+          } else if (largura > 600) {
+            margemHorizontal = largura * 0.1;
+          } else {
+            margemHorizontal = 16;
+          }
 
-                boxShadow: isDark
-                    ? []
-                    : [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _info(context, "Nome", tarefa["nome"] ?? ""),
-                  _info(context, "Data", tarefa["data"] ?? ""),
-                  _info(context, "Observação", tarefa["observacao"] ?? ""),
-                  _info(context, "Prioridade", tarefa["prioridade"] ?? ""),
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: margemHorizontal,
+              vertical: 20,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
 
-                  const SizedBox(height: 25),
+                const SizedBox(height: 10), // 🔥 respiro topo
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                // 💎 CARD MODERNO
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: theme.cardColor,
+                    borderRadius: BorderRadius.circular(20),
+
+                    border: isDark
+                        ? Border.all(
+                            color: Colors.white.withOpacity(0.08),
+                          )
+                        : null,
+
+                    boxShadow: isDark
+                        ? []
+                        : [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _Botao("Editar", Colors.blue, () async {
-                        final resultado = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                EditarTarefaPage(tarefa: tarefa),
-                          ),
-                        );
+                      _info(context, "Nome", tarefa["nome"] ?? ""),
+                      _info(context, "Data", tarefa["data"] ?? ""),
+                      _info(context, "Observação", tarefa["observacao"] ?? ""),
+                      _info(context, "Prioridade", tarefa["prioridade"] ?? ""),
 
-                        if (resultado != null) {
-                          Navigator.pop(context, resultado);
-                        }
-                      }),
+                      const SizedBox(height: 25),
 
-                      _Botao("Excluir", Colors.red, () async {
-                        final confirmar = await showDialog(
-                          context: context,
-                          builder: (_) => AlertDialog(
-                            backgroundColor: theme.cardColor,
-                            title: Text(
-                              "Excluir tarefa",
-                              style: TextStyle(
-                                  color: theme.textTheme.titleLarge?.color),
-                            ),
-                            content: Text(
-                              "Tem certeza que deseja excluir?",
-                              style: TextStyle(
-                                  color: theme.textTheme.bodyMedium?.color),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () =>
-                                    Navigator.pop(context, false),
-                                child: Text(
-                                  "Cancelar",
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _Botao("Editar", Colors.blue, () async {
+                            final resultado = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    EditarTarefaPage(tarefa: tarefa),
+                              ),
+                            );
+
+                            if (resultado != null) {
+                              Navigator.pop(context, resultado);
+                            }
+                          }),
+
+                          _Botao("Excluir", Colors.red, () async {
+                            final confirmar = await showDialog(
+                              context: context,
+                              builder: (_) => AlertDialog(
+                                backgroundColor: theme.cardColor,
+                                title: Text(
+                                  "Excluir tarefa",
+                                  style: TextStyle(
+                                      color: theme.textTheme.titleLarge?.color),
+                                ),
+                                content: Text(
+                                  "Tem certeza que deseja excluir?",
                                   style: TextStyle(
                                       color: theme.textTheme.bodyMedium?.color),
                                 ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, false),
+                                    child: Text(
+                                      "Cancelar",
+                                      style: TextStyle(
+                                          color: theme.textTheme.bodyMedium?.color),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.pop(context, true),
+                                    child: const Text("Excluir"),
+                                  ),
+                                ],
                               ),
-                              TextButton(
-                                onPressed: () =>
-                                    Navigator.pop(context, true),
-                                child: const Text("Excluir"),
-                              ),
-                            ],
-                          ),
-                        );
+                            );
 
-                        if (confirmar == true) {
-                          Navigator.pop(context, "excluir");
-                        }
-                      }),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 40),
-
-            // 🚀 BOTÃO FOCO
-            SizedBox(
-              width: double.infinity,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ModoFocoPage(tarefa: tarefa),
-                    ),
-                  );
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF7F00FF), Color(0xFFE100FF)],
-                    ),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.play_arrow, color: Colors.white),
-                      SizedBox(width: 8),
-                      Text(
-                        "Iniciar foco",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
+                            if (confirmar == true) {
+                              Navigator.pop(context, "excluir");
+                            }
+                          }),
+                        ],
                       ),
                     ],
                   ),
                 ),
-              ),
+
+                const SizedBox(height: 40),
+
+                // 🚀 BOTÃO FOCO
+                SizedBox(
+                  width: double.infinity,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => ModoFocoPage(tarefa: tarefa),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF7F00FF), Color(0xFFE100FF)],
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.play_arrow, color: Colors.white),
+                          SizedBox(width: 8),
+                          Text(
+                            "Iniciar foco",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

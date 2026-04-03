@@ -108,119 +108,150 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        centerTitle: true,
-        title: Text(
-          "Minhas Tarefas",
-          style: TextStyle(
-            fontSize: 26,
-            fontWeight: FontWeight.bold,
-            color: theme.textTheme.titleLarge?.color,
+        toolbarHeight: 80,
+
+        title: Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: Text(
+            "Minhas Tarefas",
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+              color: theme.textTheme.titleLarge?.color,
+            ),
           ),
         ),
 
+        centerTitle: true,
+
         actions: [
-          IconButton(
-            icon: Icon(Icons.settings, color: theme.iconTheme.color),
-            onPressed: () async {
-              final resultado = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ConfiguracoesPage(
-                    modoEscuroAtual: widget.modoEscuro,
-                    onTemaChanged: widget.onTemaChanged,
-                  ),
-                ),
-              );
-
-              if (resultado != null) {
-                final bool novoTema = resultado["modoEscuro"] ?? widget.modoEscuro;
-                final bool limpar = resultado["limpar"] ?? false;
-
-                widget.onTemaChanged(novoTema);
-
-                if (limpar) {
-                  setState(() {
-                    tarefas.removeWhere((t) => t["concluida"] == true);
-                  });
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Tarefas concluídas removidas 🧹"),
-                      duration: Duration(seconds: 2),
+          Padding(
+            padding: const EdgeInsets.only(right: 12, top: 10),
+            child: IconButton(
+              icon: Icon(Icons.settings, color: theme.iconTheme.color),
+              onPressed: () async {
+                final resultado = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ConfiguracoesPage(
+                      modoEscuroAtual: widget.modoEscuro,
+                      onTemaChanged: widget.onTemaChanged,
                     ),
-                  );
+                  ),
+                );
+
+                if (resultado != null) {
+                  final bool novoTema = resultado["modoEscuro"] ?? widget.modoEscuro;
+                  final bool limpar = resultado["limpar"] ?? false;
+
+                  widget.onTemaChanged(novoTema);
+
+                  if (limpar) {
+                    setState(() {
+                      tarefas.removeWhere((t) => t["concluida"] == true);
+                    });
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Tarefas concluídas removidas 🧹"),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
                 }
-              }
-            },
+              },
+            ),
           ),
         ],
       ),
 
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: ListView(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          double largura = constraints.maxWidth;
+
+          double margemHorizontal;
+
+          if (largura > 900) {
+            margemHorizontal = largura * 0.2;
+          } else if (largura > 600) {
+            margemHorizontal = largura * 0.1;
+          } else {
+            margemHorizontal = 16;
+          }
+
+          return Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: margemHorizontal,
+              vertical: 20,
+            ),
+            child: ListView(
               children: [
-                Text(
-                  "Ordenar por:",
-                  style: TextStyle(color: theme.textTheme.bodyLarge?.color),
-                ),
-                const SizedBox(width: 8),
-                DropdownButton<String>(
-                  value: filtro,
-                  underline: const SizedBox(),
-                  items: const [
-                    DropdownMenuItem(value: "alta", child: Text("Alta 🔴")),
-                    DropdownMenuItem(value: "media", child: Text("Média 🟠")),
-                    DropdownMenuItem(value: "baixa", child: Text("Baixa 🟢")),
-                    DropdownMenuItem(value: "recente", child: Text("Recente")),
-                    DropdownMenuItem(value: "antigo", child: Text("Antigo")),
+                const SizedBox(height: 10), // 🔥 respiro do topo
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      "Ordenar por:",
+                      style: TextStyle(color: theme.textTheme.bodyLarge?.color),
+                    ),
+                    const SizedBox(width: 8),
+                    DropdownButton<String>(
+                      value: filtro,
+                      underline: const SizedBox(),
+                      items: const [
+                        DropdownMenuItem(value: "alta", child: Text("Alta 🔴")),
+                        DropdownMenuItem(value: "media", child: Text("Média 🟠")),
+                        DropdownMenuItem(value: "baixa", child: Text("Baixa 🟢")),
+                        DropdownMenuItem(value: "recente", child: Text("Recente")),
+                        DropdownMenuItem(value: "antigo", child: Text("Antigo")),
+                      ],
+                      onChanged: (value) {
+                        setState(() => filtro = value!);
+                      },
+                    ),
                   ],
-                  onChanged: (value) {
-                    setState(() => filtro = value!);
-                  },
+                ),
+
+                const SizedBox(height: 15),
+
+                ...lista.map((tarefa) => _cardTarefa(context, tarefa, isDark)),
+
+                const SizedBox(height: 10),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    onPressed: () async {
+                      final novaTarefa = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const NovaTarefaPage()),
+                      );
+
+                      if (novaTarefa != null) {
+                        setState(() {
+                          tarefas.add(novaTarefa);
+                        });
+                      }
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text("Nova Tarefa"),
+                  ),
                 ),
               ],
             ),
-
-            const SizedBox(height: 15),
-
-            ...lista.map((tarefa) => _cardTarefa(context, tarefa, isDark)),
-
-            const SizedBox(height: 10),
-
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-                onPressed: () async {
-                  final novaTarefa = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (_) => const NovaTarefaPage()),
-                  );
-
-                  if (novaTarefa != null) {
-                    setState(() {
-                      tarefas.add(novaTarefa);
-                    });
-                  }
-                },
-                icon: const Icon(Icons.add),
-                label: const Text("Nova Tarefa"),
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -259,8 +290,8 @@ class _HomePageState extends State<HomePage> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: isDark
-              ? const Color(0xFF1E1E1E) // 🔥 neutro no dark
-              : _corFundo(cor),         // 🎯 colorido só no light
+              ? const Color(0xFF1E1E1E)
+              : _corFundo(cor),
           borderRadius: BorderRadius.circular(16),
 
           border: isDark

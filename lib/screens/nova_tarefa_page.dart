@@ -85,137 +85,196 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: theme.iconTheme.color),
-          onPressed: () => Navigator.pop(context),
+        toolbarHeight: 100,
+
+        leading: Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: IconButton(
+            icon: Icon(Icons.arrow_back, color: theme.iconTheme.color),
+            onPressed: () => Navigator.pop(context),
+          ),
         ),
+
         centerTitle: true,
-        title: Text(
-          "Nova Tarefa",
-          style: TextStyle(color: theme.textTheme.titleLarge?.color),
+
+        title: Padding(
+          padding: const EdgeInsets.only(top: 20),
+          child: Text(
+            "Nova Tarefa",
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+              color: theme.textTheme.titleLarge?.color,
+            ),
+          ),
         ),
       ),
 
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          double largura = constraints.maxWidth;
 
-            TextField(
-              controller: nomeController,
-              decoration: inputStyle("Nome", isDark),
+          double margemHorizontal;
+
+          if (largura > 900) {
+            margemHorizontal = largura * 0.2;
+          } else if (largura > 600) {
+            margemHorizontal = largura * 0.1;
+          } else {
+            margemHorizontal = 16;
+          }
+
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: margemHorizontal,
+              vertical: 20,
             ),
-
-            const SizedBox(height: 10),
-
-            SizedBox(
-              height: 55,
-              child: TextField(
-                controller: dataController,
-                readOnly: true,
-                decoration: inputStyle("Data", isDark).copyWith(
-                  suffixIcon: Icon(Icons.calendar_today),
-                ),
-                onTap: () async {
-                  DateTime? pickedDate = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime(2000),
-                    lastDate: DateTime(2100),
-                  );
-
-                  if (pickedDate != null) {
-                    setState(() {
-                      dataController.text =
-                          "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
-                    });
-                  }
-                },
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            TextField(
-              controller: observacaoController,
-              maxLines: 3,
-              decoration: inputStyle("Observação", isDark),
-            ),
-
-            const SizedBox(height: 15),
-
-            Text("Prioridade",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-
-            const SizedBox(height: 10),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                prioridadeBox("Alta", Colors.red, isDark),
-                const SizedBox(width: 10),
-                prioridadeBox("Média", Colors.amber, isDark),
-                const SizedBox(width: 10),
-                prioridadeBox("Baixa", Colors.green, isDark),
+
+                const SizedBox(height: 10),
+
+                TextField(
+                  controller: nomeController,
+                  decoration: inputStyle("Nome", isDark),
+                ),
+
+                const SizedBox(height: 10),
+
+                SizedBox(
+                  height: 55,
+                  child: TextField(
+                    controller: dataController,
+                    readOnly: true,
+                    decoration: inputStyle("Data", isDark).copyWith(
+                      suffixIcon: Icon(Icons.calendar_today),
+                    ),
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                      );
+
+                      if (pickedDate != null) {
+                        setState(() {
+                          dataController.text =
+                              "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                        });
+                      }
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                TextField(
+                  controller: observacaoController,
+                  maxLines: 3,
+                  decoration: inputStyle("Observação", isDark),
+                ),
+
+                const SizedBox(height: 15),
+
+                Text("Prioridade",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+
+                const SizedBox(height: 10),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    prioridadeBox("Alta", Colors.red, isDark),
+                    const SizedBox(width: 12),
+                    prioridadeBox("Média", Colors.amber, isDark),
+                    const SizedBox(width: 12),
+                    prioridadeBox("Baixa", Colors.green, isDark),
+                  ],
+                ),
+
+                const SizedBox(height: 40), // 🔥 agora controla o espaço
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton.icon(
+                    onPressed: adicionarAoGoogleCalendar,
+                    icon: const Icon(Icons.calendar_month, color: Colors.white),
+                    label: const Text(
+                      "Adicionar ao Google Calendar",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF7F00FF),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: salvarTarefa,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF7F00FF),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: const Text("Salvar",
+                        style: TextStyle(color: Colors.white)),
+                  ),
+                ),
               ],
             ),
-
-            const Spacer(),
-
-            // ✅ BOTÃO ÚNICO (CORRIGIDO)
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton.icon(
-                onPressed: adicionarAoGoogleCalendar,
-                icon: const Icon(Icons.calendar_month, color: Colors.white),
-                label: const Text(
-                  "Adicionar ao Google Calendar",
-                  style: TextStyle(color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF7F00FF),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: salvarTarefa,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF7F00FF),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-                child: const Text("Salvar",
-                    style: TextStyle(color: Colors.white)),
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
   InputDecoration inputStyle(String label, bool isDark) {
-    return InputDecoration(
-      labelText: label,
-      filled: true,
-      fillColor: isDark ? const Color(0xFF1E1E1E) : Colors.grey[100],
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide.none,
+  return InputDecoration(
+    labelText: label,
+
+    filled: true,
+    fillColor: isDark 
+        ? const Color(0xFF1E1E1E) 
+        : Colors.white,
+
+    contentPadding:
+        const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+
+    // 🔥 BORDA NORMAL
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: BorderSide(
+        color: isDark 
+            ? Colors.white.withOpacity(0.05) 
+            : Colors.grey.shade300,
       ),
-    );
+    ),
+
+    // 🔥 BORDA QUANDO CLICA (FOCO)
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: BorderSide(
+        color: isDark 
+            ? Colors.white.withOpacity(0.2) 
+            : Colors.grey.shade400, // 🔥 CINZA (sem verde)
+        width: 1.5,
+      ),
+    ),
+  );
+
   }
 
   Widget prioridadeBox(String texto, Color cor, bool isDark) {
@@ -228,7 +287,9 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
         decoration: BoxDecoration(
           color: selecionado
               ? cor.withOpacity(0.2)
-              : (isDark ? const Color(0xFF1E1E1E) : Colors.grey[200]),
+              : (isDark
+                  ? const Color(0xFF1E1E1E)
+                  : Colors.grey[200]),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(texto),
