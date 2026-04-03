@@ -159,13 +159,12 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
     final isDark = theme.brightness == Brightness.dark;
 
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 300), // 🔥 mais suave
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
 
-        // 🔥 IGUAL OUTRAS TELAS
         border: isDark
             ? Border.all(color: Colors.white.withOpacity(0.06))
             : null,
@@ -198,6 +197,13 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
           Switch(
             value: valor,
             onChanged: onChanged,
+
+            // 🔥 COR ROXA
+            activeColor: Colors.white,
+            activeTrackColor: const Color(0xFF7F00FF),
+
+            inactiveThumbColor: Colors.grey.shade400,
+            inactiveTrackColor: Colors.grey.shade300,
           ),
         ],
       ),
