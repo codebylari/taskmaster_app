@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'notificacoes.dart';
 
 class EditarTarefaPage extends StatefulWidget {
   final Map<String, dynamic> tarefa;
@@ -33,11 +34,16 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
   void salvar() {
     if (nomeController.text.isEmpty) return;
 
-    Navigator.pop(context, {
-      "nome": nomeController.text,
-      "data": dataController.text,
-      "observacao": obsController.text,
-      "prioridade": prioridadeSelecionada,
+    
+    Notificacoes.sucesso(context, "Tarefa atualizada com sucesso");
+
+    Future.delayed(const Duration(milliseconds: 500), () {
+      Navigator.pop(context, {
+        "nome": nomeController.text,
+        "data": dataController.text,
+        "observacao": obsController.text,
+        "prioridade": prioridadeSelecionada,
+      });
     });
   }
 
@@ -167,7 +173,6 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
     );
   }
 
-  // 🔥 INPUT COM BORDA + FOCO ROXO
   Widget campo(BuildContext context, String label, TextEditingController controller) {
     final theme = Theme.of(context);
 
@@ -186,7 +191,6 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
         contentPadding:
             const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
 
-        // 🔥 BORDA NORMAL
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(
@@ -194,7 +198,6 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
           ),
         ),
 
-        // 🔥 BORDA AO FOCAR
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(
@@ -206,7 +209,6 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
     );
   }
 
-  // 🔥 PRIORIDADE ESTILO PREMIUM
   Widget botaoPrioridade(BuildContext context, String valor, String texto) {
     final theme = Theme.of(context);
     final selecionado = prioridadeSelecionada == valor;

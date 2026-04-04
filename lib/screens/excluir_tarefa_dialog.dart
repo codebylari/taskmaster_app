@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'nova_tarefa_page.dart';
 import 'detalhes_tarefa_page.dart';
+import 'notificacoes.dart'; 
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -84,7 +85,6 @@ class _HomePageState extends State<HomePage> {
     final lista = tarefasOrdenadas;
 
     return Scaffold(
-      // 🔥 CORRIGIDO
       backgroundColor: theme.scaffoldBackgroundColor,
 
       appBar: AppBar(
@@ -192,6 +192,10 @@ class _HomePageState extends State<HomePage> {
           setState(() {
             tarefas.remove(tarefa);
           });
+
+          // ✅ NOTIFICAÇÃO AQUI
+          Notificacoes.sucesso(context, "Tarefa excluída com sucesso");
+
         } else if (resultado is Map) {
           setState(() {
             tarefa["nome"] = resultado["nome"];
