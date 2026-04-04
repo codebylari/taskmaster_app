@@ -35,7 +35,7 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text("Tarefa adicionada com sucesso"),
+        content: Text("Evento adicionado ao Google Calendar"),
         backgroundColor: Colors.green,
       ),
     );
@@ -71,7 +71,20 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
       "ultimaModificacao": DateTime.now(),
     };
 
-    Navigator.pop(context, novaTarefa);
+    // ✅ ADICIONADO (NOTIFICAÇÃO)
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Tarefa criada com sucesso"),
+        backgroundColor: Color(0xFF22C55E),
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 2),
+      ),
+    );
+
+    // ✅ ADICIONADO (PEQUENO DELAY PRA APARECER)
+    Future.delayed(const Duration(milliseconds: 500), () {
+      Navigator.pop(context, novaTarefa);
+    });
   }
 
   @override
@@ -245,7 +258,6 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
     );
   }
 
-  // 🔥 INPUT COM BORDA
   InputDecoration inputStyle(BuildContext context, String label) {
     final theme = Theme.of(context);
 
@@ -254,20 +266,16 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
       labelStyle: TextStyle(
         color: theme.textTheme.bodyMedium?.color,
       ),
-
       filled: true,
       fillColor: theme.cardColor,
-
       contentPadding:
           const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide(
           color: theme.dividerColor.withOpacity(0.3),
         ),
       ),
-
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: const BorderSide(
@@ -278,7 +286,6 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
     );
   }
 
-  // 🔥 PRIORIDADE TOP
   Widget prioridadeBox(BuildContext context, String texto, Color cor) {
     final theme = Theme.of(context);
     bool selecionado = prioridade == texto;

@@ -189,12 +189,30 @@ class _HomePageState extends State<HomePage> {
             tarefa["concluida"] = true;
           });
         } else if (resultado == "excluir") {
+
+          final tarefaRemovida = tarefa;
+          final index = tarefas.indexOf(tarefa);
+
           setState(() {
             tarefas.remove(tarefa);
           });
 
-          // ✅ NOTIFICAÇÃO AQUI
-          Notificacoes.sucesso(context, "Tarefa excluída com sucesso");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text("Tarefa excluída"),
+              backgroundColor: const Color(0xFF22C55E),
+              behavior: SnackBarBehavior.floating,
+              action: SnackBarAction(
+                label: "Desfazer",
+                textColor: Colors.white,
+                onPressed: () {
+                  setState(() {
+                    tarefas.insert(index, tarefaRemovida);
+                  });
+                },
+              ),
+            ),
+          );
 
         } else if (resultado is Map) {
           setState(() {
