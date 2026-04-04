@@ -12,7 +12,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String filtro = "recente";
 
-  // 🔥 TAREFAS INICIAIS VOLTARAM (IMPORTANTE PRA APRESENTAÇÃO)
   List<Map<String, dynamic>> tarefas = [
     {
       "nome": "Estudar UX",
@@ -56,9 +55,7 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> get tarefasOrdenadas {
     List<Map<String, dynamic>> lista = [...tarefas];
 
-    if (filtro == "alta" ||
-        filtro == "media" ||
-        filtro == "baixa") {
+    if (filtro == "alta" || filtro == "media" || filtro == "baixa") {
       lista.sort((a, b) {
         if (a["prioridade"] == filtro && b["prioridade"] != filtro) return -1;
         if (a["prioridade"] != filtro && b["prioridade"] == filtro) return 1;
@@ -83,18 +80,24 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final lista = tarefasOrdenadas;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FA),
+      // 🔥 CORRIGIDO
+      backgroundColor: theme.scaffoldBackgroundColor,
 
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
-        title: const Text(
+        title: Text(
           "Minhas Tarefas",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: theme.textTheme.titleLarge?.color,
+          ),
         ),
       ),
 
@@ -105,7 +108,12 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                const Text("Ordenar por: "),
+                Text(
+                  "Ordenar por: ",
+                  style: TextStyle(
+                    color: theme.textTheme.bodyMedium?.color,
+                  ),
+                ),
                 DropdownButton<String>(
                   value: filtro,
                   underline: const SizedBox(),
@@ -134,7 +142,7 @@ class _HomePageState extends State<HomePage> {
               height: 50,
               child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
+                  backgroundColor: const Color(0xFF7F00FF),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -163,11 +171,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _cardTarefa(BuildContext context, Map<String, dynamic> tarefa) {
+    final theme = Theme.of(context);
     final cor = _corPrioridade(tarefa["prioridade"]);
     final concluida = tarefa["concluida"];
 
     return GestureDetector(
-      // 🔥 VOLTOU O CLIQUE PRA DETALHES
       onTap: () async {
         final resultado = await Navigator.push(
           context,
@@ -203,7 +211,6 @@ class _HomePageState extends State<HomePage> {
 
         child: Row(
           children: [
-            // ✔️ MARCAR COMO CONCLUÍDA
             GestureDetector(
               onTap: () {
                 setState(() {
@@ -225,6 +232,7 @@ class _HomePageState extends State<HomePage> {
                 tarefa["nome"],
                 style: TextStyle(
                   fontSize: 16,
+                  color: theme.textTheme.bodyLarge?.color,
                   decoration: concluida
                       ? TextDecoration.lineThrough
                       : TextDecoration.none,

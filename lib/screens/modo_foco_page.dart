@@ -119,7 +119,6 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
   Widget build(BuildContext context) {
     final tarefa = widget.tarefa;
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -169,18 +168,9 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
                 decoration: BoxDecoration(
                   color: theme.cardColor,
                   borderRadius: BorderRadius.circular(20),
-                  border: isDark
-                      ? Border.all(color: Colors.white.withOpacity(0.08))
-                      : null,
-                  boxShadow: isDark
-                      ? []
-                      : [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 12,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
+                  border: Border.all(
+                    color: theme.dividerColor.withOpacity(0.2),
+                  ),
                 ),
 
                 child: Column(
@@ -218,7 +208,6 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
 
                     const SizedBox(height: 20),
 
-                    // 🔥 AQUI FOI AJUSTADO
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -228,26 +217,18 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
                             controller: controllerTempo,
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: theme.textTheme.bodyLarge?.color,
+                            ),
                             decoration: InputDecoration(
                               hintText: "20",
                               filled: true,
-                              fillColor: isDark
-                                  ? const Color(0xFF1E1E1E)
-                                  : Colors.white,
+                              fillColor: theme.cardColor,
                               contentPadding:
                                   const EdgeInsets.symmetric(vertical: 14),
-                              enabledBorder: OutlineInputBorder(
+                              border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14),
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade300,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(14),
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade400,
-                                  width: 1.5,
-                                ),
+                                borderSide: BorderSide.none,
                               ),
                             ),
                           ),
@@ -268,9 +249,18 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
 
                     const SizedBox(height: 20),
 
-                    Text("Nome: ${tarefa['nome'] ?? ''}"),
-                    Text("Data: ${tarefa['data'] ?? ''}"),
-                    Text("Obs: ${tarefa['observacao'] ?? ''}"),
+                    Text(
+                      "Nome: ${tarefa['nome'] ?? ''}",
+                      style: TextStyle(color: theme.textTheme.bodyMedium?.color),
+                    ),
+                    Text(
+                      "Data: ${tarefa['data'] ?? ''}",
+                      style: TextStyle(color: theme.textTheme.bodyMedium?.color),
+                    ),
+                    Text(
+                      "Obs: ${tarefa['observacao'] ?? ''}",
+                      style: TextStyle(color: theme.textTheme.bodyMedium?.color),
+                    ),
 
                     const SizedBox(height: 25),
 

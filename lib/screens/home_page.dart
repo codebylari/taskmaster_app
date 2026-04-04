@@ -50,14 +50,15 @@ class _HomePageState extends State<HomePage> {
     },
   ];
 
+  // 🔥 CORES MAIS VIVAS
   Color _corPrioridade(String p) {
     switch (p) {
       case "alta":
-        return Colors.red;
+        return Colors.redAccent;
       case "media":
-        return Colors.orange;
+        return Colors.orangeAccent;
       case "baixa":
-        return Colors.green;
+        return Colors.greenAccent;
       default:
         return Colors.grey;
     }
@@ -87,7 +88,7 @@ class _HomePageState extends State<HomePage> {
     return lista;
   }
 
-  Color _corFundo(Color cor) => cor.withOpacity(0.12);
+  Color _corFundo(Color cor) => cor.withOpacity(0.15);
 
   String _formatarData(DateTime data) {
     return "${data.day.toString().padLeft(2, '0')}/"
@@ -100,7 +101,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final lista = tarefasOrdenadas;
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -187,7 +187,7 @@ class _HomePageState extends State<HomePage> {
             ),
             child: ListView(
               children: [
-                const SizedBox(height: 10), // 🔥 respiro do topo
+                const SizedBox(height: 10),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -216,7 +216,7 @@ class _HomePageState extends State<HomePage> {
 
                 const SizedBox(height: 15),
 
-                ...lista.map((tarefa) => _cardTarefa(context, tarefa, isDark)),
+                ...lista.map((tarefa) => _cardTarefa(context, tarefa)),
 
                 const SizedBox(height: 10),
 
@@ -225,7 +225,7 @@ class _HomePageState extends State<HomePage> {
                   height: 52,
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepPurple,
+                      backgroundColor: const Color(0xFF7F00FF),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
@@ -256,7 +256,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _cardTarefa(BuildContext context, Map<String, dynamic> tarefa, bool isDark) {
+  Widget _cardTarefa(BuildContext context, Map<String, dynamic> tarefa) {
     final theme = Theme.of(context);
     final cor = _corPrioridade(tarefa["prioridade"]);
     final concluida = tarefa["concluida"];
@@ -285,28 +285,27 @@ class _HomePageState extends State<HomePage> {
         }
       },
 
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark
-              ? const Color(0xFF1E1E1E)
-              : _corFundo(cor),
+          color: _corFundo(cor),
           borderRadius: BorderRadius.circular(16),
 
-          border: isDark
-              ? Border.all(color: Colors.white.withOpacity(0.06))
-              : null,
+          // 🔥 BORDA ADICIONADA
+          border: Border.all(
+            color: theme.dividerColor.withOpacity(0.25),
+          ),
 
-          boxShadow: isDark
-              ? []
-              : [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  )
-                ],
+          // 🔥 SOMBRA LEVE (efeito premium)
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            )
+          ],
         ),
 
         child: Row(

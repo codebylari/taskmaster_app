@@ -44,11 +44,11 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
   Color corPrioridade(String p) {
     switch (p) {
       case "alta":
-        return Colors.red;
+        return Colors.redAccent;
       case "media":
-        return Colors.yellow;
+        return Colors.orangeAccent;
       case "baixa":
-        return Colors.green;
+        return Colors.greenAccent;
       default:
         return Colors.grey;
     }
@@ -56,12 +56,10 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF121212) : const Color(0xFFF7F8FA),
+      backgroundColor: theme.scaffoldBackgroundColor,
 
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -82,7 +80,7 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
         ),
 
         centerTitle: true,
-        foregroundColor: isDark ? Colors.white : Colors.black,
+        foregroundColor: theme.appBarTheme.foregroundColor,
       ),
 
       body: LayoutBuilder(
@@ -109,11 +107,11 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
               children: [
                 const SizedBox(height: 10),
 
-                campo("Nome", nomeController, isDark),
+                campo(context, "Nome", nomeController),
                 const SizedBox(height: 15),
-                campo("Data", dataController, isDark),
+                campo(context, "Data", dataController),
                 const SizedBox(height: 15),
-                campo("Observação", obsController, isDark),
+                campo(context, "Observação", obsController),
 
                 const SizedBox(height: 25),
 
@@ -122,21 +120,20 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
-                    color: isDark ? Colors.white : Colors.black,
+                    color: theme.textTheme.bodyLarge?.color,
                   ),
                 ),
 
                 const SizedBox(height: 10),
 
-                // 🔥 AQUI FOI AJUSTADO
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    botaoPrioridade("alta", "Alta 🔴", isDark),
+                    botaoPrioridade(context, "alta", "Alta"),
                     const SizedBox(width: 12),
-                    botaoPrioridade("media", "Média 🟡", isDark),
+                    botaoPrioridade(context, "media", "Média"),
                     const SizedBox(width: 12),
-                    botaoPrioridade("baixa", "Baixa 🟢", isDark),
+                    botaoPrioridade(context, "baixa", "Baixa"),
                   ],
                 ),
 
@@ -170,32 +167,50 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
     );
   }
 
-  Widget campo(String label, TextEditingController controller, bool isDark) {
+  // 🔥 INPUT COM BORDA + FOCO ROXO
+  Widget campo(BuildContext context, String label, TextEditingController controller) {
+    final theme = Theme.of(context);
+
     return TextField(
       controller: controller,
       style: TextStyle(
-        color: isDark ? Colors.white : Colors.black,
+        color: theme.textTheme.bodyLarge?.color,
       ),
       decoration: InputDecoration(
         labelText: label,
         labelStyle: TextStyle(
-          color: isDark ? Colors.white70 : Colors.black54,
+          color: theme.textTheme.bodyMedium?.color,
         ),
         filled: true,
-        fillColor:
-            isDark ? const Color(0xFF1E1E1E) : Colors.white,
+        fillColor: theme.cardColor,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-        border: OutlineInputBorder(
+
+        // 🔥 BORDA NORMAL
+        enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(
+            color: theme.dividerColor.withOpacity(0.3),
+          ),
+        ),
+
+        // 🔥 BORDA AO FOCAR
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(
+            color: Color(0xFF7F00FF),
+            width: 1.5,
+          ),
         ),
       ),
     );
   }
 
-  Widget botaoPrioridade(String valor, String texto, bool isDark) {
+  // 🔥 PRIORIDADE ESTILO PREMIUM
+  Widget botaoPrioridade(BuildContext context, String valor, String texto) {
+    final theme = Theme.of(context);
     final selecionado = prioridadeSelecionada == valor;
+    final cor = corPrioridade(valor);
 
     return GestureDetector(
       onTap: () {
@@ -205,20 +220,25 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         decoration: BoxDecoration(
-          color: selecionado
-              ? corPrioridade(valor).withOpacity(0.4)
-              : (isDark
-                  ? const Color(0xFF1E1E1E)
-                  : Colors.grey[200]),
-          borderRadius: BorderRadius.circular(12),
+          color: selecionado ? cor : theme.cardColor,
+          borderRadius: BorderRadius.circular(14),
+
+          border: Border.all(
+            color: selecionado
+                ? cor
+                : theme.dividerColor.withOpacity(0.3),
+            width: 1.5,
+          ),
         ),
         child: Text(
           texto,
           style: TextStyle(
-            color: isDark ? Colors.white : Colors.black,
-            fontWeight: FontWeight.w500,
+            color: selecionado
+                ? Colors.white
+                : theme.textTheme.bodyLarge?.color,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),

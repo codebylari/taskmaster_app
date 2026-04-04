@@ -77,7 +77,6 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -138,7 +137,7 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
 
                 TextField(
                   controller: nomeController,
-                  decoration: inputStyle("Nome", isDark),
+                  decoration: inputStyle(context, "Nome"),
                 ),
 
                 const SizedBox(height: 10),
@@ -148,8 +147,8 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
                   child: TextField(
                     controller: dataController,
                     readOnly: true,
-                    decoration: inputStyle("Data", isDark).copyWith(
-                      suffixIcon: Icon(Icons.calendar_today),
+                    decoration: inputStyle(context, "Data").copyWith(
+                      suffixIcon: Icon(Icons.calendar_today, color: theme.iconTheme.color),
                     ),
                     onTap: () async {
                       DateTime? pickedDate = await showDatePicker(
@@ -174,28 +173,33 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
                 TextField(
                   controller: observacaoController,
                   maxLines: 3,
-                  decoration: inputStyle("Observação", isDark),
+                  decoration: inputStyle(context, "Observação"),
                 ),
 
                 const SizedBox(height: 15),
 
-                Text("Prioridade",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  "Prioridade",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: theme.textTheme.bodyLarge?.color,
+                  ),
+                ),
 
                 const SizedBox(height: 10),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    prioridadeBox("Alta", Colors.red, isDark),
+                    prioridadeBox(context, "Alta", Colors.redAccent),
                     const SizedBox(width: 12),
-                    prioridadeBox("Média", Colors.amber, isDark),
+                    prioridadeBox(context, "Média", Colors.orangeAccent),
                     const SizedBox(width: 12),
-                    prioridadeBox("Baixa", Colors.green, isDark),
+                    prioridadeBox(context, "Baixa", Colors.greenAccent),
                   ],
                 ),
 
-                const SizedBox(height: 40), // 🔥 agora controla o espaço
+                const SizedBox(height: 40),
 
                 SizedBox(
                   width: double.infinity,
@@ -241,58 +245,68 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
     );
   }
 
-  InputDecoration inputStyle(String label, bool isDark) {
-  return InputDecoration(
-    labelText: label,
+  // 🔥 INPUT COM BORDA
+  InputDecoration inputStyle(BuildContext context, String label) {
+    final theme = Theme.of(context);
 
-    filled: true,
-    fillColor: isDark 
-        ? const Color(0xFF1E1E1E) 
-        : Colors.white,
-
-    contentPadding:
-        const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
-
-    // 🔥 BORDA NORMAL
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(14),
-      borderSide: BorderSide(
-        color: isDark 
-            ? Colors.white.withOpacity(0.05) 
-            : Colors.grey.shade300,
+    return InputDecoration(
+      labelText: label,
+      labelStyle: TextStyle(
+        color: theme.textTheme.bodyMedium?.color,
       ),
-    ),
 
-    // 🔥 BORDA QUANDO CLICA (FOCO)
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(14),
-      borderSide: BorderSide(
-        color: isDark 
-            ? Colors.white.withOpacity(0.2) 
-            : Colors.grey.shade400, // 🔥 CINZA (sem verde)
-        width: 1.5,
+      filled: true,
+      fillColor: theme.cardColor,
+
+      contentPadding:
+          const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(
+          color: theme.dividerColor.withOpacity(0.3),
+        ),
       ),
-    ),
-  );
 
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(
+          color: Color(0xFF7F00FF),
+          width: 1.5,
+        ),
+      ),
+    );
   }
 
-  Widget prioridadeBox(String texto, Color cor, bool isDark) {
+  // 🔥 PRIORIDADE TOP
+  Widget prioridadeBox(BuildContext context, String texto, Color cor) {
+    final theme = Theme.of(context);
     bool selecionado = prioridade == texto;
 
     return GestureDetector(
       onTap: () => setState(() => prioridade = texto),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: selecionado
-              ? cor.withOpacity(0.2)
-              : (isDark
-                  ? const Color(0xFF1E1E1E)
-                  : Colors.grey[200]),
+          color: selecionado ? cor : theme.cardColor,
           borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: selecionado
+                ? cor
+                : theme.dividerColor.withOpacity(0.3),
+            width: 1.5,
+          ),
         ),
-        child: Text(texto),
+        child: Text(
+          texto,
+          style: TextStyle(
+            color: selecionado
+                ? Colors.white
+                : theme.textTheme.bodyLarge?.color,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     );
   }

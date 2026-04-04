@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'home_page.dart';
 
 class SplashScreen extends StatefulWidget {
-  final bool modoEscuro; // 🔥 NOVO
-  final Function(bool) onTemaChanged; // 🔥 NOVO
+  final bool modoEscuro;
+  final Function(bool) onTemaChanged;
 
   const SplashScreen({
     super.key,
@@ -22,12 +22,16 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
 
     Future.delayed(const Duration(seconds: 3), () {
+
+      // 🔥 evita erro se sair da tela antes
+      if (!mounted) return;
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) => HomePage(
-            modoEscuro: widget.modoEscuro, // 🔥 CORRIGIDO
-            onTemaChanged: widget.onTemaChanged, // 🔥 CORRIGIDO
+            modoEscuro: widget.modoEscuro,
+            onTemaChanged: widget.onTemaChanged,
           ),
         ),
       );

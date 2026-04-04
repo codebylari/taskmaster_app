@@ -18,10 +18,10 @@ class DetalhesTarefaPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        toolbarHeight: 100, // 🔥 mais alto
+        toolbarHeight: 100,
 
         title: Padding(
-          padding: const EdgeInsets.only(top: 20), // 🔥 desce o título
+          padding: const EdgeInsets.only(top: 20),
           child: Text(
             "Detalhes da Tarefa",
             style: TextStyle(
@@ -34,10 +34,11 @@ class DetalhesTarefaPage extends StatelessWidget {
         ),
 
         centerTitle: true,
-        foregroundColor: isDark ? Colors.white : Colors.black,
+
+        // 🔥 CORRIGIDO (remove cor fixa)
+        foregroundColor: theme.appBarTheme.foregroundColor,
       ),
 
-      // 🔥 MESMA RESPONSIVIDADE DA HOME
       body: LayoutBuilder(
         builder: (context, constraints) {
           double largura = constraints.maxWidth;
@@ -61,9 +62,8 @@ class DetalhesTarefaPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
 
-                const SizedBox(height: 10), // 🔥 respiro topo
+                const SizedBox(height: 10),
 
-                // 💎 CARD MODERNO
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
@@ -160,7 +160,6 @@ class DetalhesTarefaPage extends StatelessWidget {
 
                 const SizedBox(height: 40),
 
-                // 🚀 BOTÃO FOCO
                 SizedBox(
                   width: double.infinity,
                   child: GestureDetector(
