@@ -176,11 +176,14 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
             margemHorizontal = 16;
           }
 
-          return Center(
+          return Align(
+            alignment: Alignment.topCenter, // 🔥 sobe o card
             child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(
-                horizontal: margemHorizontal,
-                vertical: 20,
+              padding: EdgeInsets.fromLTRB(
+                margemHorizontal,
+                10,
+                margemHorizontal,
+                20,
               ),
 
               child: Container(
@@ -280,14 +283,18 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
 
                     Text("Nome: ${tarefa['nome'] ?? ''}",
                         style: TextStyle(color: theme.textTheme.bodyMedium?.color)),
+
                     Text("Data: ${tarefa['data'] ?? ''}",
                         style: TextStyle(color: theme.textTheme.bodyMedium?.color)),
+
                     Text("Obs: ${tarefa['observacao'] ?? ''}",
+                        style: TextStyle(color: theme.textTheme.bodyMedium?.color)),
+
+                    Text("Prioridade: ${tarefa['prioridade'] ?? ''}",
                         style: TextStyle(color: theme.textTheme.bodyMedium?.color)),
 
                     const SizedBox(height: 25),
 
-                    // 🔥 BOTÕES PADRONIZADOS
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
