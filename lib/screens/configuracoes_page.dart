@@ -67,16 +67,38 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
         elevation: 0,
         toolbarHeight: 100,
         centerTitle: true,
+
         title: Padding(
-          padding: const EdgeInsets.only(top: 20),
-          child: Text(
-            "Configurações",
-            style: TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.5,
-              color: theme.textTheme.titleLarge?.color,
-            ),
+          padding: const EdgeInsets.only(top: 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Configurações",
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                  color: theme.textTheme.titleLarge?.color,
+                ),
+              ),
+
+              const SizedBox(height: 6),
+
+              Container(
+                width: 60,
+                height: 3,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  gradient: LinearGradient(
+                    colors: [
+                      theme.primaryColor,
+                      theme.primaryColor.withOpacity(0.4),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -112,7 +134,6 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
 
                   await salvarPreferencias();
 
-                  // 🔥 ESSA LINHA RESOLVE TUDO
                   widget.onTemaChanged(value);
                 },
               ),
@@ -136,7 +157,7 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
                 child: ElevatedButton(
                   onPressed: salvar,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7F00FF),
+                    backgroundColor: theme.primaryColor,
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
@@ -198,7 +219,7 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
             value: valor,
             onChanged: onChanged,
             activeColor: Colors.white,
-            activeTrackColor: const Color(0xFF7F00FF),
+            activeTrackColor: theme.primaryColor,
             inactiveThumbColor: Colors.grey.shade400,
             inactiveTrackColor: Colors.grey.shade300,
           ),

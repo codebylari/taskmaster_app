@@ -95,7 +95,7 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
                 Navigator.pop(dialogContext);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).primaryColor,
+                backgroundColor: theme.primaryColor,
               ),
               child: const Text("OK"),
             )
@@ -128,16 +128,36 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
         elevation: 0,
         toolbarHeight: 100,
         centerTitle: true,
+
         title: Padding(
-          padding: const EdgeInsets.only(top: 20),
-          child: Text(
-            "Modo Foco",
-            style: TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.5,
-              color: theme.textTheme.titleLarge?.color,
-            ),
+          padding: const EdgeInsets.only(top: 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Modo Foco",
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                  color: theme.textTheme.titleLarge?.color,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Container(
+                width: 60,
+                height: 3,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  gradient: LinearGradient(
+                    colors: [
+                      theme.primaryColor,
+                      theme.primaryColor.withOpacity(0.4),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -183,7 +203,6 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
 
                 child: Column(
                   children: [
-                    // 🔥 TIMER MAIS BONITO
                     Text(
                       formatar(tempoRestante),
                       style: TextStyle(
@@ -196,7 +215,6 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
 
                     const SizedBox(height: 25),
 
-                    // 🔥 PROGRESSO MAIS MODERNO
                     ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: LinearProgressIndicator(
@@ -204,14 +222,13 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
                         minHeight: 10,
                         backgroundColor: theme.dividerColor,
                         valueColor: AlwaysStoppedAnimation(
-                          Theme.of(context).primaryColor,
+                          theme.primaryColor,
                         ),
                       ),
                     ),
 
                     const SizedBox(height: 25),
 
-                    // 🔥 BOTÕES MELHORADOS
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -229,20 +246,14 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          width: 100,
+                          width: 90,
                           child: TextField(
                             controller: controllerTempo,
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: theme.textTheme.bodyLarge?.color,
-                            ),
                             decoration: InputDecoration(
-                              hintText: "20",
                               filled: true,
                               fillColor: theme.scaffoldBackgroundColor,
-                              contentPadding:
-                                  const EdgeInsets.symmetric(vertical: 14),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(14),
                                 borderSide: BorderSide.none,
@@ -251,16 +262,12 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
                           ),
                         ),
                         const SizedBox(width: 10),
-                        SizedBox(
-                          height: 45,
-                          child: ElevatedButton(
-                            onPressed: definirTempoCustom,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Theme.of(context).primaryColor,
-                            ),
-                            child: const Text("OK"),
+                        ElevatedButton(
+                          onPressed: definirTempoCustom,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: theme.primaryColor,
                           ),
+                          child: const Text("OK"),
                         )
                       ],
                     ),
@@ -280,13 +287,21 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
 
                     const SizedBox(height: 25),
 
+                    // 🔥 BOTÕES PADRONIZADOS
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Expanded(child: botao("Concluir", Colors.green, concluirTarefa)),
+                        SizedBox(
+                          width: 120,
+                          child: _botaoAcao("Concluir", Colors.green, concluirTarefa),
+                        ),
                         const SizedBox(width: 10),
-                        Expanded(child: botao("Sair", Colors.red, () {
-                          Navigator.pop(context);
-                        })),
+                        SizedBox(
+                          width: 120,
+                          child: _botaoAcao("Sair", Colors.red, () {
+                            Navigator.pop(context);
+                          }),
+                        ),
                       ],
                     ),
                   ],
@@ -300,32 +315,40 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
   }
 
   Widget _botaoIcon(IconData icon, VoidCallback onTap) {
+    final theme = Theme.of(context);
+
     return Material(
-      color: Theme.of(context).cardColor,
+      color: theme.cardColor,
       borderRadius: BorderRadius.circular(14),
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(12),
-          child: Icon(icon),
+          child: Icon(icon, color: theme.iconTheme.color),
         ),
       ),
     );
   }
 
-  Widget botao(String texto, Color cor, VoidCallback onTap) {
-    return SizedBox(
-      height: 45,
-      child: ElevatedButton(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: cor.withOpacity(0.9),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
+  Widget _botaoAcao(String texto, Color cor, VoidCallback onTap) {
+    return ElevatedButton(
+      onPressed: onTap,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: cor.withOpacity(0.12),
+        foregroundColor: cor,
+        elevation: 0,
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
         ),
-        child: Text(texto),
+      ).copyWith(
+        overlayColor: MaterialStateProperty.all(Colors.transparent),
+      ),
+      child: Text(
+        texto,
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontWeight: FontWeight.w600),
       ),
     );
   }

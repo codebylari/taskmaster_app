@@ -21,21 +21,40 @@ class DetalhesTarefaPage extends StatelessWidget {
         toolbarHeight: 100,
 
         title: Padding(
-          padding: const EdgeInsets.only(top: 20),
-          child: Text(
-            "Detalhes da Tarefa",
-            style: TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.5,
-              color: theme.textTheme.titleLarge?.color,
-            ),
+          padding: const EdgeInsets.only(top: 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Detalhes da Tarefa",
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                  color: theme.textTheme.titleLarge?.color,
+                ),
+              ),
+
+              const SizedBox(height: 6),
+
+              Container(
+                width: 60,
+                height: 3,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  gradient: LinearGradient(
+                    colors: [
+                      theme.primaryColor,
+                      theme.primaryColor.withOpacity(0.4),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
 
         centerTitle: true,
-
-        // 🔥 CORRIGIDO (remove cor fixa)
         foregroundColor: theme.appBarTheme.foregroundColor,
       ),
 
@@ -70,23 +89,22 @@ class DetalhesTarefaPage extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: theme.cardColor,
                     borderRadius: BorderRadius.circular(20),
-
-                    border: isDark
-                        ? Border.all(
-                            color: Colors.white.withOpacity(0.08),
-                          )
-                        : null,
-
-                    boxShadow: isDark
-                        ? []
-                        : [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
+                    border: Border.all(
+                      color: isDark
+                          ? Colors.white.withOpacity(0.06)
+                          : Colors.black.withOpacity(0.05),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: isDark
+                            ? Colors.black.withOpacity(0.4)
+                            : Colors.black.withOpacity(0.04),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
                   ),
+
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -162,8 +180,16 @@ class DetalhesTarefaPage extends StatelessWidget {
 
                 SizedBox(
                   width: double.infinity,
-                  child: GestureDetector(
-                    onTap: () {
+                  height: 52,
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.primaryColor,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -171,28 +197,12 @@ class DetalhesTarefaPage extends StatelessWidget {
                         ),
                       );
                     },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF7F00FF), Color(0xFFE100FF)],
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.play_arrow, color: Colors.white),
-                          SizedBox(width: 8),
-                          Text(
-                            "Iniciar foco",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
+                    icon: const Icon(Icons.play_arrow),
+                    label: const Text(
+                      "Iniciar foco",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
                       ),
                     ),
                   ),
@@ -241,13 +251,15 @@ class _Botao extends StatelessWidget {
     return ElevatedButton(
       onPressed: onTap,
       style: ElevatedButton.styleFrom(
-        backgroundColor: cor.withOpacity(0.15),
+        backgroundColor: cor.withOpacity(0.12),
         foregroundColor: cor,
         elevation: 0,
         padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(14),
         ),
+      ).copyWith(
+        overlayColor: MaterialStateProperty.all(Colors.transparent),
       ),
       child: Text(
         texto,

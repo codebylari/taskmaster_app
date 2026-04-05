@@ -34,7 +34,6 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
   void salvar() {
     if (nomeController.text.isEmpty) return;
 
-    
     Notificacoes.sucesso(context, "Tarefa atualizada com sucesso");
 
     Future.delayed(const Duration(milliseconds: 500), () {
@@ -73,15 +72,36 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
         toolbarHeight: 100,
 
         title: Padding(
-          padding: const EdgeInsets.only(top: 20),
-          child: Text(
-            "Editar Tarefa",
-            style: TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.5,
-              color: theme.textTheme.titleLarge?.color,
-            ),
+          padding: const EdgeInsets.only(top: 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Editar Tarefa",
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                  color: theme.textTheme.titleLarge?.color,
+                ),
+              ),
+
+              const SizedBox(height: 6),
+
+              Container(
+                width: 60,
+                height: 3,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  gradient: LinearGradient(
+                    colors: [
+                      theme.primaryColor,
+                      theme.primaryColor.withOpacity(0.4),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
 
@@ -124,21 +144,21 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
                 Text(
                   "Prioridade",
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
                     color: theme.textTheme.bodyLarge?.color,
                   ),
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 12),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     botaoPrioridade(context, "alta", "Alta"),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 10),
                     botaoPrioridade(context, "media", "Média"),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 10),
                     botaoPrioridade(context, "baixa", "Baixa"),
                   ],
                 ),
@@ -147,11 +167,12 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
 
                 SizedBox(
                   width: double.infinity,
-                  height: 50,
+                  height: 52,
                   child: ElevatedButton(
                     onPressed: salvar,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF7F00FF),
+                      backgroundColor: theme.primaryColor,
+                      elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -159,7 +180,7 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
                     child: const Text(
                       "Salvar",
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
                         color: Colors.white,
                       ),
                     ),
@@ -200,8 +221,8 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
 
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: Color(0xFF7F00FF),
+          borderSide: BorderSide(
+            color: theme.primaryColor,
             width: 1.5,
           ),
         ),
@@ -224,21 +245,22 @@ class _EditarTarefaPageState extends State<EditarTarefaPage> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         decoration: BoxDecoration(
-          color: selecionado ? cor : theme.cardColor,
+          color: selecionado
+              ? cor.withOpacity(0.15)
+              : theme.cardColor,
           borderRadius: BorderRadius.circular(14),
 
           border: Border.all(
             color: selecionado
-                ? cor
+                ? cor.withOpacity(0.6)
                 : theme.dividerColor.withOpacity(0.3),
-            width: 1.5,
           ),
         ),
         child: Text(
           texto,
           style: TextStyle(
             color: selecionado
-                ? Colors.white
+                ? cor
                 : theme.textTheme.bodyLarge?.color,
             fontWeight: FontWeight.w600,
           ),

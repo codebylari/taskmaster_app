@@ -105,20 +105,44 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
-        toolbarHeight: 80,
+        toolbarHeight: 90,
+
         title: Padding(
-          padding: const EdgeInsets.only(top: 20),
-          child: Text(
-            "Minhas Tarefas",
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.5,
-              color: theme.textTheme.titleLarge?.color,
-            ),
+          padding: const EdgeInsets.only(top: 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Minhas Tarefas",
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                  color: theme.textTheme.titleLarge?.color,
+                ),
+              ),
+
+              const SizedBox(height: 6),
+
+              Container(
+                width: 60,
+                height: 3,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  gradient: LinearGradient(
+                    colors: [
+                      Theme.of(context).primaryColor,
+                      Theme.of(context).primaryColor.withOpacity(0.4),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
+
         centerTitle: true,
+
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12, top: 10),

@@ -71,7 +71,6 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
       "ultimaModificacao": DateTime.now(),
     };
 
-    // ✅ ADICIONADO (NOTIFICAÇÃO)
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text("Tarefa criada com sucesso"),
@@ -81,7 +80,6 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
       ),
     );
 
-    // ✅ ADICIONADO (PEQUENO DELAY PRA APARECER)
     Future.delayed(const Duration(milliseconds: 500), () {
       Navigator.pop(context, novaTarefa);
     });
@@ -110,15 +108,34 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
         centerTitle: true,
 
         title: Padding(
-          padding: const EdgeInsets.only(top: 20),
-          child: Text(
-            "Nova Tarefa",
-            style: TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.5,
-              color: theme.textTheme.titleLarge?.color,
-            ),
+          padding: const EdgeInsets.only(top: 10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Nova Tarefa",
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.5,
+                  color: theme.textTheme.titleLarge?.color,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Container(
+                width: 60,
+                height: 3,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  gradient: LinearGradient(
+                    colors: [
+                      theme.primaryColor,
+                      theme.primaryColor.withOpacity(0.4),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -194,7 +211,7 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
                 Text(
                   "Prioridade",
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
                     color: theme.textTheme.bodyLarge?.color,
                   ),
                 ),
@@ -205,9 +222,9 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     prioridadeBox(context, "Alta", Colors.redAccent),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 10),
                     prioridadeBox(context, "Média", Colors.orangeAccent),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 10),
                     prioridadeBox(context, "Baixa", Colors.greenAccent),
                   ],
                 ),
@@ -220,12 +237,9 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
                   child: ElevatedButton.icon(
                     onPressed: adicionarAoGoogleCalendar,
                     icon: const Icon(Icons.calendar_month, color: Colors.white),
-                    label: const Text(
-                      "Adicionar ao Google Calendar",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    label: const Text("Adicionar ao Google Calendar"),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF7F00FF),
+                      backgroundColor: theme.primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
@@ -241,13 +255,12 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
                   child: ElevatedButton(
                     onPressed: salvarTarefa,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF7F00FF),
+                      backgroundColor: theme.primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
-                    child: const Text("Salvar",
-                        style: TextStyle(color: Colors.white)),
+                    child: const Text("Salvar"),
                   ),
                 ),
               ],
@@ -278,8 +291,8 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: Color(0xFF7F00FF),
+        borderSide: BorderSide(
+          color: theme.primaryColor,
           width: 1.5,
         ),
       ),
@@ -296,20 +309,21 @@ class _NovaTarefaPageState extends State<NovaTarefaPage> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: selecionado ? cor : theme.cardColor,
+          color: selecionado
+              ? cor.withOpacity(0.15)
+              : theme.cardColor,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: selecionado
-                ? cor
+                ? cor.withOpacity(0.6)
                 : theme.dividerColor.withOpacity(0.3),
-            width: 1.5,
           ),
         ),
         child: Text(
           texto,
           style: TextStyle(
             color: selecionado
-                ? Colors.white
+                ? cor
                 : theme.textTheme.bodyLarge?.color,
             fontWeight: FontWeight.w600,
           ),
