@@ -95,7 +95,7 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
                 Navigator.pop(dialogContext);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF7F00FF),
+                backgroundColor: Theme.of(context).primaryColor,
               ),
               child: const Text("OK"),
             )
@@ -164,49 +164,66 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
               ),
 
               child: Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   color: theme.cardColor,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(24),
                   border: Border.all(
-                    color: theme.dividerColor.withOpacity(0.2),
+                    color: theme.dividerColor.withOpacity(0.1),
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(
+                          theme.brightness == Brightness.dark ? 0.5 : 0.05),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    )
+                  ],
                 ),
 
                 child: Column(
                   children: [
+                    // 🔥 TIMER MAIS BONITO
                     Text(
                       formatar(tempoRestante),
                       style: TextStyle(
-                        fontSize: 40,
+                        fontSize: 48,
                         fontWeight: FontWeight.bold,
+                        letterSpacing: 2,
                         color: theme.textTheme.bodyLarge?.color,
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 25),
 
-                    CircularProgressIndicator(
-                      value: progresso,
-                      strokeWidth: 8,
-                      backgroundColor: theme.dividerColor,
-                      valueColor: const AlwaysStoppedAnimation(
-                        Color(0xFF7F00FF),
+                    // 🔥 PROGRESSO MAIS MODERNO
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: LinearProgressIndicator(
+                        value: progresso,
+                        minHeight: 10,
+                        backgroundColor: theme.dividerColor,
+                        valueColor: AlwaysStoppedAnimation(
+                          Theme.of(context).primaryColor,
+                        ),
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 25),
 
+                    // 🔥 BOTÕES MELHORADOS
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        IconButton(onPressed: iniciar, icon: const Icon(Icons.play_arrow)),
-                        IconButton(onPressed: pausar, icon: const Icon(Icons.pause)),
-                        IconButton(onPressed: resetar, icon: const Icon(Icons.restart_alt)),
+                        _botaoIcon(Icons.play_arrow, iniciar),
+                        const SizedBox(width: 10),
+                        _botaoIcon(Icons.pause, pausar),
+                        const SizedBox(width: 10),
+                        _botaoIcon(Icons.restart_alt, resetar),
                       ],
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 25),
 
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -223,7 +240,7 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
                             decoration: InputDecoration(
                               hintText: "20",
                               filled: true,
-                              fillColor: theme.cardColor,
+                              fillColor: theme.scaffoldBackgroundColor,
                               contentPadding:
                                   const EdgeInsets.symmetric(vertical: 14),
                               border: OutlineInputBorder(
@@ -239,7 +256,8 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
                           child: ElevatedButton(
                             onPressed: definirTempoCustom,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF7F00FF),
+                              backgroundColor:
+                                  Theme.of(context).primaryColor,
                             ),
                             child: const Text("OK"),
                           ),
@@ -247,20 +265,18 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
                       ],
                     ),
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 25),
 
-                    Text(
-                      "Nome: ${tarefa['nome'] ?? ''}",
-                      style: TextStyle(color: theme.textTheme.bodyMedium?.color),
-                    ),
-                    Text(
-                      "Data: ${tarefa['data'] ?? ''}",
-                      style: TextStyle(color: theme.textTheme.bodyMedium?.color),
-                    ),
-                    Text(
-                      "Obs: ${tarefa['observacao'] ?? ''}",
-                      style: TextStyle(color: theme.textTheme.bodyMedium?.color),
-                    ),
+                    Divider(color: theme.dividerColor),
+
+                    const SizedBox(height: 10),
+
+                    Text("Nome: ${tarefa['nome'] ?? ''}",
+                        style: TextStyle(color: theme.textTheme.bodyMedium?.color)),
+                    Text("Data: ${tarefa['data'] ?? ''}",
+                        style: TextStyle(color: theme.textTheme.bodyMedium?.color)),
+                    Text("Obs: ${tarefa['observacao'] ?? ''}",
+                        style: TextStyle(color: theme.textTheme.bodyMedium?.color)),
 
                     const SizedBox(height: 25),
 
@@ -279,6 +295,21 @@ class _ModoFocoPageState extends State<ModoFocoPage> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _botaoIcon(IconData icon, VoidCallback onTap) {
+    return Material(
+      color: Theme.of(context).cardColor,
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Icon(icon),
+        ),
       ),
     );
   }

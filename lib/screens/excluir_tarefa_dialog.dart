@@ -20,7 +20,7 @@ class _HomePageState extends State<HomePage> {
       "concluida": false,
       "data": "25/03/2026",
       "observacao": "Revisar conceitos de UI/UX",
-      "dataCriacao": DateTime.now().subtract(const Duration(minutes: 30))
+      "dataCriacao": DateTime.now().subtract(const Duration(minutes: 30)),
     },
     {
       "nome": "Academia",
@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage> {
       "concluida": false,
       "data": "26/03/2026",
       "observacao": "Treino de perna",
-      "dataCriacao": DateTime.now().subtract(const Duration(minutes: 20))
+      "dataCriacao": DateTime.now().subtract(const Duration(minutes: 20)),
     },
     {
       "nome": "Fazer Trabalho",
@@ -36,18 +36,18 @@ class _HomePageState extends State<HomePage> {
       "concluida": false,
       "data": "27/03/2026",
       "observacao": "Finalizar projeto Flutter",
-      "dataCriacao": DateTime.now()
+      "dataCriacao": DateTime.now(),
     },
   ];
 
   Color _corPrioridade(String p) {
     switch (p) {
       case "alta":
-        return Colors.red;
+        return Color(0xFFFF6B6B);
       case "media":
-        return Colors.yellow;
+        return Color(0xFFFFB86C);
       case "baixa":
-        return Colors.green;
+        return Color(0xFF50FA7B);
       default:
         return Colors.grey;
     }
@@ -65,13 +65,11 @@ class _HomePageState extends State<HomePage> {
     }
 
     if (filtro == "recente") {
-      lista.sort((a, b) =>
-          b["dataCriacao"].compareTo(a["dataCriacao"]));
+      lista.sort((a, b) => b["dataCriacao"].compareTo(a["dataCriacao"]));
     }
 
     if (filtro == "antigo") {
-      lista.sort((a, b) =>
-          a["dataCriacao"].compareTo(b["dataCriacao"]));
+      lista.sort((a, b) => a["dataCriacao"].compareTo(b["dataCriacao"]));
     }
 
     return lista;
@@ -110,9 +108,7 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Text(
                   "Ordenar por: ",
-                  style: TextStyle(
-                    color: theme.textTheme.bodyMedium?.color,
-                  ),
+                  style: TextStyle(color: theme.textTheme.bodyMedium?.color),
                 ),
                 DropdownButton<String>(
                   value: filtro,
@@ -121,8 +117,14 @@ class _HomePageState extends State<HomePage> {
                     DropdownMenuItem(value: "alta", child: Text("Alta 🔴")),
                     DropdownMenuItem(value: "media", child: Text("Média 🟡")),
                     DropdownMenuItem(value: "baixa", child: Text("Baixa 🟢")),
-                    DropdownMenuItem(value: "recente", child: Text("Mais recente")),
-                    DropdownMenuItem(value: "antigo", child: Text("Mais antigo")),
+                    DropdownMenuItem(
+                      value: "recente",
+                      child: Text("Mais recente"),
+                    ),
+                    DropdownMenuItem(
+                      value: "antigo",
+                      child: Text("Mais antigo"),
+                    ),
                   ],
                   onChanged: (value) {
                     setState(() => filtro = value!);
@@ -150,8 +152,7 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () async {
                   final novaTarefa = await Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (_) => const NovaTarefaPage()),
+                    MaterialPageRoute(builder: (_) => const NovaTarefaPage()),
                   );
 
                   if (novaTarefa != null) {
@@ -179,9 +180,7 @@ class _HomePageState extends State<HomePage> {
       onTap: () async {
         final resultado = await Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (_) => DetalhesTarefaPage(tarefa: tarefa),
-          ),
+          MaterialPageRoute(builder: (_) => DetalhesTarefaPage(tarefa: tarefa)),
         );
 
         if (resultado == true) {
@@ -240,9 +239,7 @@ class _HomePageState extends State<HomePage> {
                 });
               },
               child: Icon(
-                concluida
-                    ? Icons.check_circle
-                    : Icons.radio_button_unchecked,
+                concluida ? Icons.check_circle : Icons.radio_button_unchecked,
                 color: cor,
               ),
             ),

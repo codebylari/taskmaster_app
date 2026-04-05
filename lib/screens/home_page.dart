@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'nova_tarefa_page.dart';
 import 'detalhes_tarefa_page.dart';
-import 'configuracoes_page.dart'; 
+import 'configuracoes_page.dart';
 
 class HomePage extends StatefulWidget {
   final bool modoEscuro;
@@ -14,7 +14,7 @@ class HomePage extends StatefulWidget {
   });
 
   @override
- State<HomePage> createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
@@ -50,7 +50,6 @@ class _HomePageState extends State<HomePage> {
     },
   ];
 
-  // 🔥 CORES MAIS VIVAS
   Color _corPrioridade(String p) {
     switch (p) {
       case "alta":
@@ -76,13 +75,11 @@ class _HomePageState extends State<HomePage> {
     }
 
     if (filtro == "recente") {
-      lista.sort((a, b) =>
-          b["dataCriacao"].compareTo(a["dataCriacao"]));
+      lista.sort((a, b) => b["dataCriacao"].compareTo(a["dataCriacao"]));
     }
 
     if (filtro == "antigo") {
-      lista.sort((a, b) =>
-          a["dataCriacao"].compareTo(b["dataCriacao"]));
+      lista.sort((a, b) => a["dataCriacao"].compareTo(b["dataCriacao"]));
     }
 
     return lista;
@@ -106,10 +103,9 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: theme.scaffoldBackgroundColor,
 
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         toolbarHeight: 80,
-
         title: Padding(
           padding: const EdgeInsets.only(top: 20),
           child: Text(
@@ -122,9 +118,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-
         centerTitle: true,
-
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12, top: 10),
@@ -142,7 +136,8 @@ class _HomePageState extends State<HomePage> {
                 );
 
                 if (resultado != null) {
-                  final bool novoTema = resultado["modoEscuro"] ?? widget.modoEscuro;
+                  final bool novoTema =
+                      resultado["modoEscuro"] ?? widget.modoEscuro;
                   final bool limpar = resultado["limpar"] ?? false;
 
                   widget.onTemaChanged(novoTema);
@@ -198,6 +193,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(width: 8),
                     DropdownButton<String>(
+                      dropdownColor: theme.cardColor,
+                      style: TextStyle(color: theme.textTheme.bodyLarge?.color),
                       value: filtro,
                       underline: const SizedBox(),
                       items: const [
@@ -225,7 +222,7 @@ class _HomePageState extends State<HomePage> {
                   height: 52,
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF7F00FF),
+                      backgroundColor: Theme.of(context).primaryColor,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
@@ -235,7 +232,8 @@ class _HomePageState extends State<HomePage> {
                       final novaTarefa = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (_) => const NovaTarefaPage()),
+                          builder: (_) => const NovaTarefaPage(),
+                        ),
                       );
 
                       if (novaTarefa != null) {
@@ -261,109 +259,124 @@ class _HomePageState extends State<HomePage> {
     final cor = _corPrioridade(tarefa["prioridade"]);
     final concluida = tarefa["concluida"];
 
-    return GestureDetector(
-      onTap: () async {
-        final resultado = await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => DetalhesTarefaPage(tarefa: tarefa),
-          ),
-        );
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
 
-        if (resultado == true) {
-          setState(() => tarefa["concluida"] = true);
-        } else if (resultado == "excluir") {
-          setState(() => tarefas.remove(tarefa));
-        } else if (resultado is Map) {
-          setState(() {
-            tarefa["nome"] = resultado["nome"];
-            tarefa["data"] = resultado["data"];
-            tarefa["observacao"] = resultado["observacao"];
-            tarefa["prioridade"] = resultado["prioridade"];
-            tarefa["ultimaModificacao"] = DateTime.now();
-          });
-        }
-      },
-
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: _corFundo(cor),
+        child: InkWell(
           borderRadius: BorderRadius.circular(16),
+          splashColor: cor.withOpacity(0.15),
+          highlightColor: cor.withOpacity(0.08),
 
-          // 🔥 BORDA ADICIONADA
-          border: Border.all(
-            color: theme.dividerColor.withOpacity(0.25),
+          onTap: () async {
+            final resultado = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => DetalhesTarefaPage(tarefa: tarefa),
+              ),
+            );
+
+            if (resultado == true) {
+              setState(() => tarefa["concluida"] = true);
+            } else if (resultado == "excluir") {
+              setState(() => tarefas.remove(tarefa));
+            } else if (resultado is Map) {
+              setState(() {
+                tarefa["nome"] = resultado["nome"];
+                tarefa["data"] = resultado["data"];
+                tarefa["observacao"] = resultado["observacao"];
+                tarefa["prioridade"] = resultado["prioridade"];
+                tarefa["ultimaModificacao"] = DateTime.now();
+              });
+            }
+          },
+
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: widget.modoEscuro
+                  ? theme.cardColor
+                  : _corFundo(cor),
+
+              borderRadius: BorderRadius.circular(16),
+
+              border: Border.all(
+                color: widget.modoEscuro
+                    ? Colors.white.withOpacity(0.06)
+                    : cor.withOpacity(0.4),
+              ),
+
+              boxShadow: [
+                BoxShadow(
+                  color: widget.modoEscuro
+                      ? Colors.black.withOpacity(0.5)
+                      : Colors.black.withOpacity(0.06),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      tarefa["concluida"] = !tarefa["concluida"];
+                    });
+                  },
+                  child: Icon(
+                    concluida
+                        ? Icons.check_circle
+                        : Icons.radio_button_unchecked,
+                    color: cor,
+                  ),
+                ),
+
+                const SizedBox(width: 12),
+
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        tarefa["nome"],
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: theme.textTheme.bodyLarge?.color,
+                          decoration: concluida
+                              ? TextDecoration.lineThrough
+                              : TextDecoration.none,
+                        ),
+                      ),
+
+                      const SizedBox(height: 4),
+
+                      Text(
+                        "Data: ${tarefa["data"]}",
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: theme.textTheme.bodySmall?.color,
+                        ),
+                      ),
+
+                      Text(
+                        "Editado: ${_formatarData(
+                          tarefa["ultimaModificacao"] ?? DateTime.now()
+                        )}",
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: theme.hintColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-
-          // 🔥 SOMBRA LEVE (efeito premium)
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            )
-          ],
-        ),
-
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  tarefa["concluida"] = !tarefa["concluida"];
-                });
-              },
-              child: Icon(
-                concluida
-                    ? Icons.check_circle
-                    : Icons.radio_button_unchecked,
-                color: cor,
-              ),
-            ),
-
-            const SizedBox(width: 12),
-
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    tarefa["nome"],
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: theme.textTheme.bodyLarge?.color,
-                      decoration: concluida
-                          ? TextDecoration.lineThrough
-                          : TextDecoration.none,
-                    ),
-                  ),
-
-                  const SizedBox(height: 4),
-
-                  Text(
-                    "Data: ${tarefa["data"]}",
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: theme.textTheme.bodySmall?.color,
-                    ),
-                  ),
-
-                  Text(
-                    "Editado: ${_formatarData(
-                      tarefa["ultimaModificacao"] ?? DateTime.now()
-                    )}",
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: theme.hintColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ),
       ),
     );
