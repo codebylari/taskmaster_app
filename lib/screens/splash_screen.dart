@@ -63,7 +63,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   children: [
 
                     const Text(
-                      "TaskMaster",
+                      "Organiza+",
                       style: TextStyle(
                         fontSize: 50,
                         color: Colors.white,
