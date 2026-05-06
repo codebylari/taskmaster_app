@@ -27,6 +27,7 @@ flutter:
   assets:
     - assets/
     - assets/images/sobre.png
+    - assets/icon.png
 
   fonts:
     - family: ShareTechMono

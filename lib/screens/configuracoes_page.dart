@@ -50,6 +50,7 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
+
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -86,6 +87,7 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
           ),
         ),
       ),
+
       body: LayoutBuilder(
         builder: (context, constraints) {
           double largura = constraints.maxWidth;
@@ -106,6 +108,7 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
               vertical: 20,
             ),
             children: [
+
               _itemConfiguracao(
                 context,
                 titulo: "Modo escuro",
@@ -167,30 +170,41 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
                   ),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.info_outline,
-                        size: 20,
-                        color: theme.iconTheme.color,
-                      ),
+                      Icon(Icons.info_outline, size: 20),
                       const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          "Sobre nós",
-                          style: TextStyle(
-                            fontSize: 15,
-                            color:
-                                theme.textTheme.bodyLarge?.color,
-                          ),
-                        ),
+                      const Expanded(
+                        child: Text("Sobre nós"),
                       ),
-                      const Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16,
-                      ),
+                      const Icon(Icons.arrow_forward_ios, size: 16),
                     ],
                   ),
                 ),
               ),
+
+              // 🔥 BOTÃO INTELIGENTE
+              if (limparConcluidas) ...[
+                const SizedBox(height: 20),
+
+                SizedBox(
+                  height: 52,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context, {
+                        "modoEscuro": modoEscuro,
+                        "limpar": true,
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.primaryColor,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: const Text("Confirmar limpeza"),
+                  ),
+                ),
+              ],
             ],
           );
         },
@@ -233,12 +247,7 @@ class _ConfiguracoesPageState extends State<ConfiguracoesPage> {
         children: [
           Icon(icone, size: 20),
           const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              titulo,
-              style: const TextStyle(fontSize: 15),
-            ),
-          ),
+          Expanded(child: Text(titulo)),
           Switch(
             value: valor,
             onChanged: onChanged,
